@@ -1,7 +1,7 @@
 # Autonomous Academic Intelligence Platform (AAIP)
 ## Stage 1 & Stage 2 — Full-Stack AI Academic Operations Platform
 
-> **SIH Problem Statement AG002 — Agentic & Generative AI**  
+> ** Problem Statement AG002 — Agentic & Generative AI**  
 > *"Smarter Scheduling. Intelligent Academic Operations."*
 
 AAIP is an enterprise-grade virtual Academic Operations Manager designed for universities and higher education institutions. 
