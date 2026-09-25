@@ -15,6 +15,7 @@ interface AuthContextType {
     role: UserRole;
     department_id?: number | null;
   }) => Promise<User>;
+  updateUser: (updated: User) => void;
   logout: () => void;
   quickSwitchRole: (role: UserRole) => Promise<User>;
 }
@@ -94,6 +95,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
   };
 
+  const updateUser = (updated: User) => {
+    localStorage.setItem('aaip_user', JSON.stringify(updated));
+    setUser(updated);
+  };
+
   const quickSwitchRole = async (role: UserRole): Promise<User> => {
     const creds = DEMO_CREDENTIALS[role];
     return await login(creds.email, creds.pass);
@@ -108,6 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         register,
+        updateUser,
         logout,
         quickSwitchRole,
       }}

@@ -8,6 +8,40 @@ export interface User {
   department_id?: number | null;
   is_active: boolean;
   created_at: string;
+  phone?: string;
+  designation?: string;
+  bio?: string;
+  avatar_url?: string;
+}
+
+export interface UserCertificate {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  credentialId?: string;
+  fileName?: string;
+  fileSize?: string;
+  fileData?: string;
+}
+
+export interface UserResume {
+  fileName: string;
+  fileSize: string;
+  uploadedAt: string;
+  fileData?: string;
+}
+
+export interface UserMaterial {
+  id: string;
+  title: string;
+  category: string;
+  subject?: string;
+  description?: string;
+  fileName: string;
+  fileSize: string;
+  uploadedAt: string;
+  fileData?: string;
 }
 
 export interface Department {

@@ -65,6 +65,15 @@ export const authApi = {
     const res = await api.get<User>('/auth/me');
     return res.data;
   },
+  updateProfile: async (data: {
+    full_name?: string;
+    email?: string;
+    department_id?: number | null;
+    password?: string;
+  }) => {
+    const res = await api.put<User>('/auth/profile', data);
+    return res.data;
+  },
   logout: async () => {
     const res = await api.post('/auth/logout');
     return res.data;

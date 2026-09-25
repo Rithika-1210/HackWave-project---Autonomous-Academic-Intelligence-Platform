@@ -23,6 +23,7 @@ import { TimetableManagement } from '@/pages/timetables/TimetableManagement';
 import { ExaminationManagement } from '@/pages/examinations/ExaminationManagement';
 import { NotificationCenter } from '@/pages/notifications/NotificationCenter';
 import { UserManagement } from '@/pages/admin/UserManagement';
+import { UserProfilePage } from '@/pages/profile/UserProfilePage';
 
 // Stage 2 & Stage 3 AI & Digital Twin Pages
 import { AiTimetableGenerator } from '@/pages/ai/AiTimetableGenerator';
@@ -145,6 +146,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/timetables" element={<TimetableManagement />} />
         <Route path="/examinations" element={<ExaminationManagement />} />
         <Route path="/notifications" element={<NotificationCenter />} />
+        <Route path="/profile" element={<UserProfilePage />} />
 
         {/* Administrator-Only User Management */}
         <Route

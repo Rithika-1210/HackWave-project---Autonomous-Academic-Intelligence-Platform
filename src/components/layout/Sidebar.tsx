@@ -128,16 +128,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
-      case 'admin': return { label: 'Admin (L5)', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20' };
-      case 'hod': return { label: 'HOD (L4)', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' };
-      case 'faculty': return { label: 'Faculty (L3)', color: 'bg-sky-500/10 text-sky-400 border-sky-500/20' };
-      case 'student': return { label: 'Student (L1)', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' };
-      case 'exam_cell': return { label: 'Exam Cell (L4)', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' };
-      default: return { label: 'User', color: 'bg-slate-500/10 text-slate-400 border-slate-500/20' };
+      case 'admin': return { label: 'Administrator', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20' };
+      case 'hod': return { label: 'Head of Department', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' };
+      case 'faculty': return { label: 'Faculty Member', color: 'bg-sky-500/10 text-sky-400 border-sky-500/20' };
+      case 'student': return { label: 'Student', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' };
+      case 'exam_cell': return { label: 'Examination Cell', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' };
+      default: return { label: 'Institutional Member', color: 'bg-slate-500/10 text-slate-400 border-slate-500/20' };
     }
   };
 
   const badge = getRoleBadge(user?.role);
+  const avatarUrl = user?.id ? localStorage.getItem(`aaip_avatar_${user.id}`) || user?.avatar_url : null;
 
   return (
     <aside
@@ -232,48 +233,50 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
         </nav>
       </div>
 
-      {/* User Footer Profile & Logout */}
+      {/* User Footer Profile (Clicking opens /profile) */}
       <div className="p-3 border-t border-slate-800 bg-slate-950/60">
-        {!collapsed ? (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2.5 px-2">
-              <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 font-bold text-xs shrink-0">
-                {user?.full_name?.charAt(0) || 'U'}
+        <button
+          type="button"
+          onClick={() => navigate('/profile')}
+          className="w-full text-left p-1.5 rounded-xl hover:bg-slate-800/70 transition-all group cursor-pointer flex flex-col gap-2"
+          title="View & Edit Profile"
+        >
+          {!collapsed ? (
+            <div className="flex flex-col gap-1.5 w-full">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 font-bold text-xs shrink-0 overflow-hidden group-hover:ring-2 group-hover:ring-sky-500 transition-all">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    user?.full_name?.charAt(0) || 'U'
+                  )}
+                </div>
+                <div className="flex flex-col truncate flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-200 truncate group-hover:text-sky-400 transition-colors">
+                    {user?.full_name}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono truncate">
+                    {user?.email}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col truncate">
-                <span className="text-xs font-semibold text-slate-200 truncate">{user?.full_name}</span>
-                <span className="text-[10px] text-slate-500 font-mono truncate">{user?.email}</span>
-              </div>
-            </div>
 
-            <div className="flex items-center justify-between pt-1">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono border font-semibold ${badge.color}`}>
-                {badge.label}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 px-2 py-1 rounded-md transition-colors font-medium"
-                title="Sign out of current session"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Logout</span>
-              </button>
+              <div className="pt-0.5">
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono border font-semibold inline-block ${badge.color}`}>
+                  {badge.label}
+                </span>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 font-bold text-xs">
-              {user?.full_name?.charAt(0) || 'U'}
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 font-bold text-xs mx-auto overflow-hidden group-hover:ring-2 group-hover:ring-sky-500 transition-all">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                user?.full_name?.charAt(0) || 'U'
+              )}
             </div>
-            <button
-              onClick={handleLogout}
-              className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/10 transition-colors"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+          )}
+        </button>
       </div>
     </aside>
   );

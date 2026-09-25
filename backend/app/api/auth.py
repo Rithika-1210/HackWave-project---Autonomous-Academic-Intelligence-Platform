@@ -6,7 +6,7 @@ from app.database.session import get_db
 from app.core.security import verify_password, create_access_token, get_password_hash
 from app.core.config import settings
 from app.models.models import User, Faculty, Student, Department
-from app.schemas.schemas import LoginRequest, TokenResponse, UserOut, UserCreate
+from app.schemas.schemas import LoginRequest, TokenResponse, UserOut, UserCreate, UserUpdate
 from app.api.deps import get_current_user, log_audit_action
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -149,8 +149,33 @@ def login(login_data: LoginRequest, request: Request, db: Session = Depends(get_
 def read_current_user(current_user: User = Depends(get_current_user)):
     return UserOut.model_validate(current_user)
 
+@router.put("/profile", response_model=UserOut)
+def update_profile(
+    profile_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if profile_data.full_name:
+        current_user.full_name = profile_data.full_name.strip()
+    if profile_data.email:
+        new_email = profile_data.email.lower().strip()
+        existing = db.query(User).filter(User.email == new_email, User.id != current_user.id).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Institutional email is already taken by another account")
+        current_user.email = new_email
+    if profile_data.department_id is not None:
+        current_user.department_id = profile_data.department_id
+    if profile_data.password:
+        current_user.hashed_password = get_password_hash(profile_data.password)
+    
+    db.commit()
+    db.refresh(current_user)
+    log_audit_action(db, current_user, "UPDATE_PROFILE", "User", f"User {current_user.id} updated their profile settings")
+    return UserOut.model_validate(current_user)
+
 @router.post("/logout")
 def logout(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     log_audit_action(db, current_user, "LOGOUT", "User", "User logged out")
     return {"message": "Logged out successfully"}
+
 
