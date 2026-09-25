@@ -236,40 +236,35 @@ export const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <div className="text-2xl">🛡️</div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <h3 className="font-bold text-slate-900 text-sm">Administrator</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Global governance over all departments, users, courses, classrooms, and system-wide audits.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <div className="text-2xl">🏛️</div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <h3 className="font-bold text-slate-900 text-sm">Head of Department</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Departmental timetable approvals, faculty workload monitoring, and subject allocations.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <div className="text-2xl">👨‍🏫</div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <h3 className="font-bold text-slate-900 text-sm">Faculty Member</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Personalized weekly timetable, assigned subjects, and teaching workload tracking.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <div className="text-2xl">🎓</div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <h3 className="font-bold text-slate-900 text-sm">Student</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Semester class schedule, classroom locations, enrolled subjects, and exam dates.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <div className="text-2xl">📋</div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
               <h3 className="font-bold text-slate-900 text-sm">Examination Cell</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Exam scheduling, hall capacity management, and conflict-free seating coordination.
