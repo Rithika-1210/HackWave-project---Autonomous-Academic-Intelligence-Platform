@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { notificationsApi } from '@/services/api';
@@ -11,7 +11,6 @@ export const DashboardLayout: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -62,18 +61,7 @@ export const DashboardLayout: React.FC = () => {
         }`}
       >
         {/* Topbar Header */}
-        <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-6 flex items-center justify-between shadow-xs">
-          
-          {/* Breadcrumb / Title */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono">
-              AAIP
-            </span>
-            <span className="text-slate-300">/</span>
-            <span className="text-sm font-bold text-slate-800 capitalize">
-              {location.pathname.replace('/', '').replace('-', ' ') || 'Dashboard'}
-            </span>
-          </div>
+        <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-6 flex items-center justify-end shadow-xs">
 
           {/* Right Toolbar */}
           <div className="flex items-center gap-3.5">
