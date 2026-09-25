@@ -44,10 +44,10 @@ export const FacultyDashboard: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-semibold">
             <span>Faculty Instruction Portal</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             {stats.faculty_name}
           </h1>
-          <p className="text-xs md:text-sm text-slate-300 font-normal">
+          <p className="text-sm text-slate-300 font-normal">
             {stats.designation} &bull; {stats.department_name}
           </p>
         </div>

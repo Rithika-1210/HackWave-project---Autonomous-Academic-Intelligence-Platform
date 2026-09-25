@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { studentsApi, departmentsApi, coursesApi } from '@/services/api';
 import { Student, Department, Course } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   GraduationCap, Plus, Search, Filter, Edit, Trash2, Mail, Phone,
@@ -169,27 +170,20 @@ export const StudentManagement: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* Title & Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <GraduationCap className="w-6 h-6 text-sky-600" />
-            <span>Student Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Maintain institutional student enrollments, cohort batches, semester progression, and profiles.
-          </p>
-        </div>
-
-        {canManage && (
+      <PageHeader
+        title="Student Management"
+        subtitle="Maintain institutional student enrollments, cohort batches, semester progression, and profiles."
+        icon={GraduationCap}
+        actions={canManage && (
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md shadow-sky-600/25 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add Student Record</span>
           </button>
         )}
-      </div>
+      />
 
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">

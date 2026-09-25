@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { facultyApi, departmentsApi } from '@/services/api';
 import { Faculty, Department } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Users, Plus, Search, Filter, Edit, Trash2, Mail, Phone,
@@ -160,27 +161,20 @@ export const FacultyManagement: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* Title & Actions */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Users className="w-6 h-6 text-indigo-600" />
-            <span>Faculty Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Maintain academic instructors, teaching specialization credentials, and weekly workload balance.
-          </p>
-        </div>
-
-        {canManage && (
+      <PageHeader
+        title="Faculty Management"
+        subtitle="Maintain academic instructors, teaching specialization credentials, and weekly workload balance."
+        icon={Users}
+        actions={canManage && (
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/25 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add Faculty Member</span>
           </button>
         )}
-      </div>
+      />
 
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">

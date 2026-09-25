@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { User, Department } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
 import { departmentsApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -157,26 +158,21 @@ export const UserManagement: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <UserCog className="w-6 h-6 text-rose-600" />
-            <span>User Management & RBAC Governance</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Administrator-only portal to manage user identities, RBAC roles, account lifecycles, and passwords.
-          </p>
-        </div>
-
-        <button
-          onClick={openCreateModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create User Account</span>
-        </button>
-      </div>
+      {/* Standardized Header */}
+      <PageHeader
+        title="User Management & RBAC Governance"
+        subtitle="Administrator-only portal to manage user identities, RBAC roles, account lifecycles, and passwords."
+        icon={UserCog}
+        actions={
+          <button
+            onClick={openCreateModal}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm shadow-xs transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create User Account</span>
+          </button>
+        }
+      />
 
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">

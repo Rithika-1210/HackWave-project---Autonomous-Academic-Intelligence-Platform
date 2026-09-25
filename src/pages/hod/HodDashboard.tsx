@@ -50,10 +50,10 @@ export const HodDashboard: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-semibold">
             <span>HOD Operations Clearance • {stats.department_code}</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             {stats.department_name}
           </h1>
-          <p className="text-xs md:text-sm text-slate-300 font-normal">
+          <p className="text-sm text-slate-300 font-normal">
             Departmental timetable synchronization, faculty workload ceilings, and subject assignments.
           </p>
         </div>

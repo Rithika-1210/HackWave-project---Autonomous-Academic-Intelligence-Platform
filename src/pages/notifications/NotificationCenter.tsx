@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { notificationsApi } from '@/services/api';
 import { NotificationItem } from '@/types';
+import { PageHeader } from '@/components/common/PageHeader';
+import { TabNavigation } from '@/components/common/TabNavigation';
 import {
   Bell, CheckCheck, Clock, AlertTriangle, CheckCircle2,
   Info, ShieldAlert, MapPin, ArrowRight, ExternalLink
@@ -161,62 +163,33 @@ export const NotificationCenter: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-300">
       
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Bell className="w-6 h-6 text-sky-600" />
-            <span>Academic Notification Center</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time timetable changes, exam announcements, and institutional alerts. Click any notification to navigate directly to its location.
-          </p>
-        </div>
-
-        {unreadCount > 0 && (
+      {/* Standardized Header */}
+      <PageHeader
+        title="Academic Notification Center"
+        subtitle="Real-time timetable changes, exam announcements, and institutional alerts. Click any card to navigate directly to its location."
+        icon={Bell}
+        actions={unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors cursor-pointer"
           >
             <CheckCheck className="w-4 h-4 text-sky-600" />
             <span>Mark All as Read ({unreadCount})</span>
           </button>
         )}
-      </div>
+      />
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-        <button
-          onClick={() => setFilterType('all')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            filterType === 'all'
-              ? 'bg-sky-50 text-sky-700 font-bold border border-sky-200'
-              : 'text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          All ({notifications.length})
-        </button>
-        <button
-          onClick={() => setFilterType('unread')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            filterType === 'unread'
-              ? 'bg-sky-50 text-sky-700 font-bold border border-sky-200'
-              : 'text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          Unread ({unreadCount})
-        </button>
-        <button
-          onClick={() => setFilterType('read')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-            filterType === 'read'
-              ? 'bg-sky-50 text-sky-700 font-bold border border-sky-200'
-              : 'text-slate-500 hover:text-slate-900'
-          }`}
-        >
-          Read ({notifications.length - unreadCount})
-        </button>
-      </div>
+      {/* Filter Tabs using TabNavigation */}
+      <TabNavigation
+        tabs={[
+          { id: 'all', label: 'All Notifications', count: notifications.length },
+          { id: 'unread', label: 'Unread', count: unreadCount },
+          { id: 'read', label: 'Read', count: notifications.length - unreadCount },
+        ]}
+        activeTab={filterType}
+        onChange={setFilterType}
+        variant="pill"
+      />
 
       {/* Notifications List */}
       {loading ? (

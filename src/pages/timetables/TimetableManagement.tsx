@@ -6,6 +6,8 @@ import {
   TimetableEntry, Department, Subject, Faculty, Classroom
 } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
+import { TabNavigation } from '@/components/common/TabNavigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   CalendarDays, Plus, Filter, Trash2, Clock, MapPin,
@@ -141,57 +143,34 @@ export const TimetableManagement: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Title */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <CalendarDays className="w-6 h-6 text-sky-600" />
-            <span>Academic Timetable Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Weekly and daily scheduling grid with real-time faculty & classroom collision interception.
-          </p>
-        </div>
-
-        {canManage && (
+      {/* Standardized Header */}
+      <PageHeader
+        title="Academic Timetable Management"
+        subtitle="Weekly and daily scheduling grid with real-time faculty & classroom collision interception."
+        icon={CalendarDays}
+        actions={canManage && (
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md shadow-sky-600/25 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Schedule Lecture Slot</span>
           </button>
         )}
-      </div>
+      />
 
       {/* Day Selector & Filters */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
-        {/* Day Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <button
-            onClick={() => setSelectedDay('All')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedDay === 'All'
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-          >
-            All Days
-          </button>
-          {DAYS.map((day) => (
-            <button
-              key={day}
-              onClick={() => setSelectedDay(day)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                selectedDay === day
-                  ? 'bg-sky-600 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {day}
-            </button>
-          ))}
-        </div>
+        {/* Day Pills using TabNavigation */}
+        <TabNavigation
+          tabs={[
+            { id: 'All', label: 'All Days' },
+            ...DAYS.map((d) => ({ id: d, label: d })),
+          ]}
+          activeTab={selectedDay}
+          onChange={setSelectedDay}
+          variant="pill"
+        />
 
         {/* Secondary Filter Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">

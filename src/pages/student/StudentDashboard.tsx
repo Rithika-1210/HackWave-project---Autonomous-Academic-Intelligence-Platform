@@ -43,10 +43,10 @@ export const StudentDashboard: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
             <span>Student Academic Portal • Semester {stats.semester}</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             {stats.student_name}
           </h1>
-          <p className="text-xs md:text-sm text-slate-300 font-mono">
+          <p className="text-sm text-slate-300 font-mono">
             Roll: <strong className="text-white">{stats.student_id}</strong> &bull; {stats.course_name} ({stats.department_name})
           </p>
         </div>

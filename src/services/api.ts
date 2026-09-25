@@ -23,9 +23,53 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-// Response Interceptor: Handle Unauthorized Expiry
+// High-Speed In-Memory Client Cache for instantaneous tab & route switching
+const apiCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL_MS = 30_000; // 30 seconds TTL
+
+export const clearApiCache = (pattern?: string) => {
+  if (!pattern) {
+    apiCache.clear();
+    return;
+  }
+  for (const key of apiCache.keys()) {
+    if (key.includes(pattern)) {
+      apiCache.delete(key);
+    }
+  }
+};
+
+export const cachedGet = async <T>(url: string, config?: any): Promise<T> => {
+  const cacheKey = `${url}_${JSON.stringify(config?.params || {})}`;
+  const now = Date.now();
+  const cached = apiCache.get(cacheKey);
+
+  if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data as T;
+  }
+
+  const res = await api.get<T>(url, config);
+  apiCache.set(cacheKey, { data: res.data, timestamp: now });
+  return res.data;
+};
+
+// Response Interceptor: Handle Unauthorized Expiry & Invalidate Cache on Mutations
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Automatically invalidate cache on write operations
+    const method = response.config.method?.toLowerCase();
+    if (method && ['post', 'put', 'patch', 'delete'].includes(method)) {
+      const url = response.config.url || '';
+      const parts = url.split('/').filter(Boolean);
+      const resource = parts[0] || '';
+      if (resource) {
+        clearApiCache(resource);
+      } else {
+        clearApiCache();
+      }
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       // Don't auto-redirect if on the login page
@@ -45,6 +89,7 @@ api.interceptors.response.use(
 export const authApi = {
   login: async (email: string, password: string) => {
     const res = await api.post<{ access_token: string; token_type: string; user: User }>('/auth/login', { email, password });
+    clearApiCache();
     return res.data;
   },
   register: async (userData: {
@@ -55,11 +100,11 @@ export const authApi = {
     department_id?: number | null;
   }) => {
     const res = await api.post<{ access_token: string; token_type: string; user: User }>('/auth/register', userData);
+    clearApiCache();
     return res.data;
   },
   getPublicDepartments: async () => {
-    const res = await api.get<{ id: number; name: string; code: string }[]>('/auth/departments');
-    return res.data;
+    return cachedGet<{ id: number; name: string; code: string }[]>('/auth/departments');
   },
   getMe: async () => {
     const res = await api.get<User>('/auth/me');
@@ -72,10 +117,12 @@ export const authApi = {
     password?: string;
   }) => {
     const res = await api.put<User>('/auth/profile', data);
+    clearApiCache();
     return res.data;
   },
   logout: async () => {
     const res = await api.post('/auth/logout');
+    clearApiCache();
     return res.data;
   }
 };
@@ -85,23 +132,24 @@ export const authApi = {
 // --------------------------------------------------------------------------
 export const departmentsApi = {
   getAll: async (params?: { status_filter?: string; search?: string }) => {
-    const res = await api.get<Department[]>('/departments', { params });
-    return res.data;
+    return cachedGet<Department[]>('/departments', { params });
   },
   getById: async (id: number) => {
-    const res = await api.get<Department>(`/departments/${id}`);
-    return res.data;
+    return cachedGet<Department>(`/departments/${id}`);
   },
   create: async (data: Partial<Department>) => {
     const res = await api.post<Department>('/departments', data);
+    clearApiCache('department');
     return res.data;
   },
   update: async (id: number, data: Partial<Department>) => {
     const res = await api.put<Department>(`/departments/${id}`, data);
+    clearApiCache('department');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/departments/${id}`);
+    clearApiCache('department');
     return res.data;
   }
 };
@@ -111,23 +159,24 @@ export const departmentsApi = {
 // --------------------------------------------------------------------------
 export const facultyApi = {
   getAll: async (params?: { department_id?: number; status_filter?: string; search?: string }) => {
-    const res = await api.get<Faculty[]>('/faculty', { params });
-    return res.data;
+    return cachedGet<Faculty[]>('/faculty', { params });
   },
   getById: async (id: number) => {
-    const res = await api.get<Faculty>(`/faculty/${id}`);
-    return res.data;
+    return cachedGet<Faculty>(`/faculty/${id}`);
   },
   create: async (data: any) => {
     const res = await api.post<Faculty>('/faculty', data);
+    clearApiCache('faculty');
     return res.data;
   },
   update: async (id: number, data: Partial<Faculty>) => {
     const res = await api.put<Faculty>(`/faculty/${id}`, data);
+    clearApiCache('faculty');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/faculty/${id}`);
+    clearApiCache('faculty');
     return res.data;
   }
 };
@@ -137,23 +186,24 @@ export const facultyApi = {
 // --------------------------------------------------------------------------
 export const studentsApi = {
   getAll: async (params?: { department_id?: number; course_id?: number; semester?: number; batch?: string; search?: string }) => {
-    const res = await api.get<Student[]>('/students', { params });
-    return res.data;
+    return cachedGet<Student[]>('/students', { params });
   },
   getById: async (id: number) => {
-    const res = await api.get<Student>(`/students/${id}`);
-    return res.data;
+    return cachedGet<Student>(`/students/${id}`);
   },
   create: async (data: any) => {
     const res = await api.post<Student>('/students', data);
+    clearApiCache('student');
     return res.data;
   },
   update: async (id: number, data: Partial<Student>) => {
     const res = await api.put<Student>(`/students/${id}`, data);
+    clearApiCache('student');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/students/${id}`);
+    clearApiCache('student');
     return res.data;
   }
 };
@@ -163,19 +213,21 @@ export const studentsApi = {
 // --------------------------------------------------------------------------
 export const coursesApi = {
   getAll: async (params?: { department_id?: number; status_filter?: string }) => {
-    const res = await api.get<Course[]>('/courses', { params });
-    return res.data;
+    return cachedGet<Course[]>('/courses', { params });
   },
   create: async (data: Partial<Course>) => {
     const res = await api.post<Course>('/courses', data);
+    clearApiCache('course');
     return res.data;
   },
   update: async (id: number, data: Partial<Course>) => {
     const res = await api.put<Course>(`/courses/${id}`, data);
+    clearApiCache('course');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/courses/${id}`);
+    clearApiCache('course');
     return res.data;
   }
 };
@@ -185,20 +237,21 @@ export const coursesApi = {
 // --------------------------------------------------------------------------
 export const subjectsApi = {
   getAll: async (params?: { department_id?: number; course_id?: number; semester?: number; search?: string; status_filter?: string }) => {
-    const res = await api.get<Subject[]>('/subjects', { params });
-    return res.data;
+    return cachedGet<Subject[]>('/subjects', { params });
   },
-
   create: async (data: Partial<Subject>) => {
     const res = await api.post<Subject>('/subjects', data);
+    clearApiCache('subject');
     return res.data;
   },
   update: async (id: number, data: Partial<Subject>) => {
     const res = await api.put<Subject>(`/subjects/${id}`, data);
+    clearApiCache('subject');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/subjects/${id}`);
+    clearApiCache('subject');
     return res.data;
   }
 };
@@ -208,19 +261,21 @@ export const subjectsApi = {
 // --------------------------------------------------------------------------
 export const resourcesApi = {
   getAll: async (params?: { resource_type?: string; availability_status?: string; search?: string }) => {
-    const res = await api.get<Classroom[]>('/resources', { params });
-    return res.data;
+    return cachedGet<Classroom[]>('/resources', { params });
   },
   create: async (data: Partial<Classroom>) => {
     const res = await api.post<Classroom>('/resources', data);
+    clearApiCache('resource');
     return res.data;
   },
   update: async (id: number, data: Partial<Classroom>) => {
     const res = await api.put<Classroom>(`/resources/${id}`, data);
+    clearApiCache('resource');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/resources/${id}`);
+    clearApiCache('resource');
     return res.data;
   }
 };
@@ -230,19 +285,21 @@ export const resourcesApi = {
 // --------------------------------------------------------------------------
 export const timetablesApi = {
   getEntries: async (params?: { department_id?: number; course_id?: number; semester?: number; batch?: string; faculty_id?: number; classroom_id?: number; day_of_week?: string }) => {
-    const res = await api.get<TimetableEntry[]>('/timetables', { params });
-    return res.data;
+    return cachedGet<TimetableEntry[]>('/timetables', { params });
   },
   createEntry: async (data: Partial<TimetableEntry>) => {
     const res = await api.post<TimetableEntry>('/timetables', data);
+    clearApiCache('timetable');
     return res.data;
   },
   updateEntry: async (id: number, data: Partial<TimetableEntry>) => {
     const res = await api.put<TimetableEntry>(`/timetables/${id}`, data);
+    clearApiCache('timetable');
     return res.data;
   },
   deleteEntry: async (id: number) => {
     const res = await api.delete(`/timetables/${id}`);
+    clearApiCache('timetable');
     return res.data;
   }
 };
@@ -252,19 +309,21 @@ export const timetablesApi = {
 // --------------------------------------------------------------------------
 export const examinationsApi = {
   getAll: async (params?: { department_id?: number; semester?: number; status_filter?: string; search?: string }) => {
-    const res = await api.get<Examination[]>('/examinations', { params });
-    return res.data;
+    return cachedGet<Examination[]>('/examinations', { params });
   },
   create: async (data: Partial<Examination>) => {
     const res = await api.post<Examination>('/examinations', data);
+    clearApiCache('examination');
     return res.data;
   },
   update: async (id: number, data: Partial<Examination>) => {
     const res = await api.put<Examination>(`/examinations/${id}`, data);
+    clearApiCache('examination');
     return res.data;
   },
   delete: async (id: number) => {
     const res = await api.delete(`/examinations/${id}`);
+    clearApiCache('examination');
     return res.data;
   }
 };
@@ -274,19 +333,19 @@ export const examinationsApi = {
 // --------------------------------------------------------------------------
 export const notificationsApi = {
   getAll: async () => {
-    const res = await api.get<NotificationItem[]>('/notifications');
-    return res.data;
+    return cachedGet<NotificationItem[]>('/notifications');
   },
   getUnreadCount: async () => {
-    const res = await api.get<{ unread_count: number }>('/notifications/unread-count');
-    return res.data;
+    return cachedGet<{ unread_count: number }>('/notifications/unread-count');
   },
   markRead: async (id: number) => {
     const res = await api.put(`/notifications/${id}/read`);
+    clearApiCache('notification');
     return res.data;
   },
   markAllRead: async () => {
     const res = await api.put('/notifications/read-all');
+    clearApiCache('notification');
     return res.data;
   }
 };
@@ -296,24 +355,19 @@ export const notificationsApi = {
 // --------------------------------------------------------------------------
 export const dashboardApi = {
   getAdmin: async () => {
-    const res = await api.get<AdminStats>('/dashboard/admin');
-    return res.data;
+    return cachedGet<AdminStats>('/dashboard/admin');
   },
   getHod: async () => {
-    const res = await api.get<HodStats>('/dashboard/hod');
-    return res.data;
+    return cachedGet<HodStats>('/dashboard/hod');
   },
   getFaculty: async () => {
-    const res = await api.get<FacultyStats>('/dashboard/faculty');
-    return res.data;
+    return cachedGet<FacultyStats>('/dashboard/faculty');
   },
   getStudent: async () => {
-    const res = await api.get<StudentStats>('/dashboard/student');
-    return res.data;
+    return cachedGet<StudentStats>('/dashboard/student');
   },
   getExamCell: async () => {
-    const res = await api.get<ExamCellStats>('/dashboard/exam_cell');
-    return res.data;
+    return cachedGet<ExamCellStats>('/dashboard/exam_cell');
   }
 };
 

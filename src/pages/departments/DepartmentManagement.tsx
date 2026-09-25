@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { departmentsApi } from '@/services/api';
 import { Department } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Building2, Plus, Search, Filter, Edit, Trash2,
@@ -119,27 +120,20 @@ export const DepartmentManagement: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* Page Title & Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Building2 className="w-6 h-6 text-sky-600" />
-            <span>Department Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Configure academic branches, HOD appointments, and departmental organizational scope.
-          </p>
-        </div>
-
-        {canManage && (
+      <PageHeader
+        title="Department Management"
+        subtitle="Configure academic branches, HOD appointments, and departmental organizational scope."
+        icon={Building2}
+        actions={canManage && (
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md shadow-sky-600/25 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Department</span>
           </button>
         )}
-      </div>
+      />
 
       {/* Filter and Search Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">

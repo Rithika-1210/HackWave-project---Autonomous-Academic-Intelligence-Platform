@@ -46,10 +46,10 @@ export const ExamCellDashboard: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-semibold">
             <span>Central Examination Cell Operations</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             Examination Coordination & Seating Center
           </h1>
-          <p className="text-xs md:text-sm text-slate-300 font-normal">
+          <p className="text-sm text-slate-300 font-normal">
             Autonomous timetable conflict interception, exam hall allocation, and invigilator matrix control.
           </p>
         </div>

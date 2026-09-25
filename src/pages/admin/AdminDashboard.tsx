@@ -56,10 +56,10 @@ export const AdminDashboard: React.FC = () => {
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Administrator Operations Portal</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight">
             Institutional Operations Command Center
           </h1>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
+          <p className="text-sm text-slate-300 leading-relaxed font-normal">
             Real-time synchronization across departments, faculty workloads, timetables, and resource capacities.
           </p>
         </div>

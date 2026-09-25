@@ -507,7 +507,7 @@ export const UserProfilePage: React.FC = () => {
           {/* User Header Details */}
           <div className="flex-1 text-center md:text-left space-y-2">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white drop-shadow-xs">
+              <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-xs">
                 {user?.full_name}
               </h1>
               <span className="px-3 py-1 rounded-full text-xs font-bold font-mono bg-sky-500/20 text-sky-300 border border-sky-400/40">
@@ -515,7 +515,7 @@ export const UserProfilePage: React.FC = () => {
               </span>
             </div>
             
-            <p className="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
               {designation} &bull; <span className="text-sky-300 font-mono">{user?.email}</span>
             </p>
 

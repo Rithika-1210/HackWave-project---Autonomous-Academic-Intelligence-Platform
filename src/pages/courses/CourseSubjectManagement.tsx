@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { coursesApi, subjectsApi, departmentsApi, facultyApi } from '@/services/api';
 import { Course, Subject, Department, Faculty } from '@/types';
 import { Modal } from '@/components/common/Modal';
+import { PageHeader } from '@/components/common/PageHeader';
+import { TabNavigation } from '@/components/common/TabNavigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   BookOpen, Plus, Search, Filter, Edit, Trash2,
@@ -209,61 +211,41 @@ export const CourseSubjectManagement: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-sky-600" />
-            <span>Course & Subject Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Curricular structure, degree tracks, syllabus subject mapping, and faculty instructor allocations.
-          </p>
-        </div>
-
-        {canManage && (
+      {/* Standardized Header */}
+      <PageHeader
+        title="Course & Subject Management"
+        subtitle="Curricular structure, degree tracks, syllabus subject mapping, and faculty instructor allocations."
+        icon={BookOpen}
+        actions={canManage && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => openCourseModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs shadow-xs transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Add Degree Course</span>
             </button>
             <button
               onClick={() => openSubjectModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md shadow-sky-600/25 transition-all"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs hover:shadow-md transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Add Curriculum Subject</span>
             </button>
           </div>
         )}
-      </div>
+      />
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
-        <button
-          onClick={() => setActiveTab('subjects')}
-          className={`pb-3 px-4 font-bold text-xs border-b-2 transition-all ${
-            activeTab === 'subjects'
-              ? 'border-sky-600 text-sky-700'
-              : 'border-transparent text-slate-400 hover:text-slate-700'
-          }`}
-        >
-          Curriculum Subjects ({subjects.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('courses')}
-          className={`pb-3 px-4 font-bold text-xs border-b-2 transition-all ${
-            activeTab === 'courses'
-              ? 'border-sky-600 text-sky-700'
-              : 'border-transparent text-slate-400 hover:text-slate-700'
-          }`}
-        >
-          Degree Courses ({courses.length})
-        </button>
-      </div>
+      {/* Standardized Tabs */}
+      <TabNavigation
+        tabs={[
+          { id: 'subjects', label: 'Curriculum Subjects', count: subjects.length },
+          { id: 'courses', label: 'Degree Courses', count: courses.length },
+        ]}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+        variant="underline"
+      />
 
       {/* Filters (For Subjects Tab) */}
       {activeTab === 'subjects' && (
