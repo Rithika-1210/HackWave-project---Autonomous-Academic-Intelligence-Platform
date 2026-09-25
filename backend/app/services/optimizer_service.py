@@ -3,7 +3,12 @@ import json
 from datetime import datetime
 from typing import List, Dict, Any, Tuple
 from sqlalchemy.orm import Session
-from ortools.sat.python import cp_model
+try:
+    from ortools.sat.python import cp_model
+    HAS_ORTOOLS = True
+except Exception:
+    cp_model = None
+    HAS_ORTOOLS = False
 
 from app.models.models import (
     Department, Subject, Faculty, Classroom, Timetable, TimetableEntry,
@@ -97,7 +102,21 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
             infeasibility_reasons=infeasibility_reasons
         )
 
-    # 2. Build OR-Tools CP-SAT Model
+    # 2. Check OR-Tools availability & Build CP-SAT Model
+    if not HAS_ORTOOLS:
+        return GenerateScheduleResponse(
+            job_id=job_id,
+            status="Infeasible",
+            feasible=False,
+            optimization_score=0,
+            hard_conflicts_count=1,
+            gap_efficiency_pct=0,
+            workload_balance_pct=0,
+            entries=[],
+            explanation="The OR-Tools CP-SAT constraint optimization engine is unavailable in this serverless environment.",
+            infeasibility_reasons=["Google OR-Tools solver library is not loaded."]
+        )
+
     model = cp_model.CpModel()
     
     # Decision Variables: X[subject_id, day_idx, period_idx] in {0, 1}

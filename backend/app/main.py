@@ -19,8 +19,29 @@ from app.api.notifications import router as notifications_router
 from app.api.dashboard import router as dashboard_router
 from app.api.ai import router as ai_router
 
-# Ensure all database tables exist
-Base.metadata.create_all(bind=engine)
+# Ensure all database tables exist safely
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(f"Database initialization notice: {e}")
+
+# Auto-seed initial demo data if database is fresh (crucial for serverless /tmp lifecycle)
+try:
+    from app.database.session import SessionLocal
+    from app.models.models import User
+    from app.seed import seed_database
+    from app.seed_stage3 import seed_stage3_data
+
+    with SessionLocal() as db_session:
+        has_admin = db_session.query(User).filter(User.email == "admin@aaip.edu").first()
+        if not has_admin:
+            seed_database()
+            try:
+                seed_stage3_data()
+            except Exception as e3:
+                print(f"Stage 3 auto-seed notice: {e3}")
+except Exception as seed_err:
+    print(f"Auto-seeding notice: {seed_err}")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
