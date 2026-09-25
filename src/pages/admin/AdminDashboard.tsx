@@ -54,7 +54,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="relative z-10 max-w-2xl space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-semibold">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Administrator Portal • Clearance Level 5</span>
+            <span>Administrator Operations Portal</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             Institutional Operations Command Center

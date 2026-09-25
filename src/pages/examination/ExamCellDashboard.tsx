@@ -44,7 +44,7 @@ export const ExamCellDashboard: React.FC = () => {
       <div className="bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-semibold">
-            <span>Central Examination Cell Operations • Level 4</span>
+            <span>Central Examination Cell Operations</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             Examination Coordination & Seating Center

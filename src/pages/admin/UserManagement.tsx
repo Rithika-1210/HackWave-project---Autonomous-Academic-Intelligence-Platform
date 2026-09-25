@@ -339,11 +339,11 @@ export const UserManagement: React.FC = () => {
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                <option value="admin">Administrator (Level 5)</option>
-                <option value="hod">HOD (Level 4)</option>
-                <option value="faculty">Faculty (Level 3)</option>
-                <option value="student">Student (Level 1)</option>
-                <option value="exam_cell">Exam Cell (Level 4)</option>
+                <option value="admin">Administrator</option>
+                <option value="hod">Head of Department (HOD)</option>
+                <option value="faculty">Faculty</option>
+                <option value="student">Student</option>
+                <option value="exam_cell">Exam Cell Coordinator</option>
               </select>
             </div>
             <div className="space-y-1">

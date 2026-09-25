@@ -69,7 +69,7 @@ export const DashboardLayout: React.FC = () => {
           {/* Breadcrumb / Title */}
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono">
-              AAIP STAGE 1
+              AAIP
             </span>
             <span className="text-slate-300">/</span>
             <span className="text-sm font-bold text-slate-800 capitalize">
@@ -80,7 +80,7 @@ export const DashboardLayout: React.FC = () => {
           {/* Right Toolbar */}
           <div className="flex items-center gap-4">
             
-            {/* Quick Demo Role Switcher for SIH Hackathon Evaluation */}
+            {/* Quick Demo Role Switcher */}
             <div className="relative">
               <button
                 type="button"
@@ -96,7 +96,7 @@ export const DashboardLayout: React.FC = () => {
               {roleSwitcherOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-2 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono">
-                    SIH Demo Role Switcher
+                    Demo Role Switcher
                   </div>
                   <div className="space-y-1 mt-1">
                     {rolesList.map((r) => {

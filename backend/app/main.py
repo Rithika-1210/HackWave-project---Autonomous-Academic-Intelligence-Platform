@@ -45,7 +45,7 @@ except Exception as seed_err:
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="Backend REST API for Autonomous Academic Intelligence Platform (AAIP) - SIH Problem Statement AG002",
+    description="Backend REST API for Autonomous Academic Intelligence Platform (AAIP)",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"

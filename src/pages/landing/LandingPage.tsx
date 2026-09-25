@@ -18,12 +18,6 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             
-            {/* Tagline Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 border border-sky-200 text-sky-800 text-xs sm:text-sm font-semibold shadow-xs">
-              <Sparkles className="w-4 h-4 text-sky-600" />
-              <span>Smarter Scheduling. Intelligent Academic Operations.</span>
-            </div>
-
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
               Transform Academic Operations with{' '}
@@ -54,13 +48,6 @@ export const LandingPage: React.FC = () => {
               </a>
             </div>
 
-            {/* Problem Statement Pill */}
-            <div className="pt-6 flex items-center justify-center gap-4 text-xs font-mono text-slate-500">
-              <span className="px-2.5 py-1 rounded-md bg-slate-200/80 text-slate-700 font-bold">SIH Problem Statement AG002</span>
-              <span>•</span>
-              <span>Stage 1 Foundation Architecture</span>
-            </div>
-
           </div>
         </div>
 
@@ -85,8 +72,8 @@ export const LandingPage: React.FC = () => {
               <div className="text-xs sm:text-sm font-semibold text-slate-600 mt-1">Normalized DB Architecture</div>
             </div>
             <div className="p-4">
-              <div className="text-3xl sm:text-4xl font-extrabold text-amber-600 font-mono">Stage 1</div>
-              <div className="text-xs sm:text-sm font-semibold text-slate-600 mt-1">Autonomous Ready Foundation</div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-amber-600 font-mono">AI-Driven</div>
+              <div className="text-xs sm:text-sm font-semibold text-slate-600 mt-1">Autonomous Operations Engine</div>
             </div>
           </div>
         </div>
@@ -252,7 +239,6 @@ export const LandingPage: React.FC = () => {
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="text-2xl">🛡️</div>
               <h3 className="font-bold text-slate-900 text-sm">Administrator</h3>
-              <span className="inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 font-bold border border-rose-200">Level 5</span>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Global governance over all departments, users, courses, classrooms, and system-wide audits.
               </p>
@@ -261,7 +247,6 @@ export const LandingPage: React.FC = () => {
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="text-2xl">🏛️</div>
               <h3 className="font-bold text-slate-900 text-sm">Head of Department</h3>
-              <span className="inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 font-bold border border-amber-200">Level 4</span>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Departmental timetable approvals, faculty workload monitoring, and subject allocations.
               </p>
@@ -270,7 +255,6 @@ export const LandingPage: React.FC = () => {
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="text-2xl">👨‍🏫</div>
               <h3 className="font-bold text-slate-900 text-sm">Faculty Member</h3>
-              <span className="inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-50 text-sky-600 font-bold border border-sky-200">Level 3</span>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Personalized weekly timetable, assigned subjects, and teaching workload tracking.
               </p>
@@ -279,7 +263,6 @@ export const LandingPage: React.FC = () => {
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="text-2xl">🎓</div>
               <h3 className="font-bold text-slate-900 text-sm">Student</h3>
-              <span className="inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold border border-emerald-200">Level 1</span>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Semester class schedule, classroom locations, enrolled subjects, and exam dates.
               </p>
@@ -288,7 +271,6 @@ export const LandingPage: React.FC = () => {
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="text-2xl">📋</div>
               <h3 className="font-bold text-slate-900 text-sm">Examination Cell</h3>
-              <span className="inline-block text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 font-bold border border-purple-200">Level 4</span>
               <p className="text-xs text-slate-500 leading-relaxed">
                 Exam scheduling, hall capacity management, and conflict-free seating coordination.
               </p>

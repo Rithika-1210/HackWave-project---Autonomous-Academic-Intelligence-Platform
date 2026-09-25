@@ -30,8 +30,8 @@ export const Navbar: React.FC = () => {
               <img src="/assets/logo.jpg" alt="AAIP Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-slate-900 tracking-tight text-lg leading-tight flex items-center gap-1.5">
-                AAIP <span className="text-xs px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-semibold border border-sky-200">Stage 1</span>
+              <span className="font-extrabold text-slate-900 tracking-tight text-lg leading-tight">
+                AAIP
               </span>
               <span className="text-xs text-slate-500 font-medium">Autonomous Academic Intelligence</span>
             </div>

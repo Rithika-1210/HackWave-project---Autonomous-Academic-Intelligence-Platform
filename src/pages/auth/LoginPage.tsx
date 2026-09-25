@@ -37,7 +37,7 @@ export const LoginPage: React.FC = () => {
       email: 'admin@aaip.edu',
       pass: 'Admin@2026!',
       icon: '🛡️',
-      badge: 'Clearance Level 5',
+      badge: 'Global Governance',
       desc: 'Full institutional governance, courses, departments, classrooms, audit logs',
     },
     {
@@ -46,7 +46,7 @@ export const LoginPage: React.FC = () => {
       email: 'hod.cse@aaip.edu',
       pass: 'Hod@2026!',
       icon: '🏛️',
-      badge: 'Clearance Level 4',
+      badge: 'Departmental Head',
       desc: 'CSE department scheduling, faculty workload approvals, subject matrix',
     },
     {
@@ -55,7 +55,7 @@ export const LoginPage: React.FC = () => {
       email: 'dr.elena@aaip.edu',
       pass: 'Faculty@2026!',
       icon: '👨‍🏫',
-      badge: 'Clearance Level 3',
+      badge: 'Faculty Member',
       desc: 'Weekly teaching timetable, assigned subjects, workload distribution',
     },
     {
@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
       email: 'aarav.sharma@aaip.edu',
       pass: 'Student@2026!',
       icon: '🎓',
-      badge: 'Clearance Level 1',
+      badge: 'Student Portal',
       desc: 'Class schedule, enrolled subjects, examination hall ticket seating',
     },
     {
@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
       email: 'examcell@aaip.edu',
       pass: 'ExamCell@2026!',
       icon: '📋',
-      badge: 'Clearance Level 4',
+      badge: 'Examination Cell',
       desc: 'Exam timetable management, central examination halls, task checklists',
     },
   ];
@@ -135,19 +135,19 @@ export const LoginPage: React.FC = () => {
           Institutional Sign In
         </h2>
         <p className="mt-1 text-xs text-slate-400">
-          Enter credentials or click a pre-configured role below for SIH evaluation.
+          Enter your institutional credentials or select an account below.
         </p>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-4xl relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* LEFT: DEMO CREDENTIALS PANEL FOR SIH EVALUATION (5 Cols) */}
+          {/* LEFT: DEMO CREDENTIALS PANEL (5 Cols) */}
           <div className="lg:col-span-5 bg-slate-800/80 backdrop-blur-md rounded-2xl p-5 border border-slate-700/80 shadow-xl space-y-3">
             <div className="flex items-center justify-between pb-3 border-b border-slate-700">
               <span className="text-xs font-bold uppercase tracking-wider text-sky-400 font-mono flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                SIH Evaluation Accounts
+                Demo Role Accounts
               </span>
               <span className="text-[10px] text-slate-400">1-Click Autofill</span>
             </div>

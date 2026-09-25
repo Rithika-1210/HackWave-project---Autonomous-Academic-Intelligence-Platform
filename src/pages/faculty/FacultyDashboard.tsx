@@ -42,7 +42,7 @@ export const FacultyDashboard: React.FC = () => {
       <div className="bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-semibold">
-            <span>Faculty Instruction Portal • Level 3</span>
+            <span>Faculty Instruction Portal</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             {stats.faculty_name}

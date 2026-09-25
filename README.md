@@ -20,17 +20,17 @@ Stage 2 transforms the Stage 1 website foundation into a **predictive, constrain
 
 ---
 
-### 🔑 SIH Evaluation Demo Credentials
+### 🔑 Institutional Demo Credentials
 
 Use the **1-Click Autofill Panel** on the login page (`http://localhost:5173/login`) or enter any of these credentials:
 
-| Role | Institutional Email | Passphrase | Clearance Level & Scope |
+| Role | Institutional Email | Passphrase | Institutional Clearance & Scope |
 | :--- | :--- | :--- | :--- |
-| **🛡️ Administrator** | `admin@aaip.edu` | `Admin@123` / `Admin@2026!` | **Level 5**: Global governance, all AI optimization engines, full institutional approvals, user and department administration. |
-| **🏛️ Head of Dept (HOD)** | `hod.cse@aaip.edu` | `Hod@123` / `Hod@2026!` | **Level 4**: Computer Science & Engineering department schedules, CP-SAT timetable generation, faculty workload balancing, rescheduling approvals. |
-| **👨‍🏫 Faculty** | `faculty.cse@aaip.edu` / `dr.elena@aaip.edu` | `Faculty@123` / `Faculty@2026!` | **Level 3**: Personal teaching timetable, AI Copilot, emergency leave simulation, workload tracking. |
-| **🎓 Student** | `student.cse@aaip.edu` / `aarav.sharma@aaip.edu` | `Student@123` / `Student@2026!` | **Level 1**: Semester 6 class schedule, classroom locations, enrolled courses, AI Copilot. |
-| **📋 Examination Cell** | `examcell@aaip.edu` | `Exam@123` / `ExamCell@2026!` | **Level 4**: AI exam timetable optimizer, exam hall conflict interception, invigilator assignments. |
+| **🛡️ Administrator** | `admin@aaip.edu` | `Admin@123` / `Admin@2026!` | Global governance, all AI optimization engines, full institutional approvals, user and department administration. |
+| **🏛️ Head of Dept (HOD)** | `hod.cse@aaip.edu` | `Hod@123` / `Hod@2026!` | Computer Science & Engineering department schedules, CP-SAT timetable generation, faculty workload balancing, rescheduling approvals. |
+| **👨‍🏫 Faculty** | `faculty.cse@aaip.edu` / `dr.elena@aaip.edu` | `Faculty@123` / `Faculty@2026!` | Personal teaching timetable, AI Copilot, emergency leave simulation, workload tracking. |
+| **🎓 Student** | `student.cse@aaip.edu` / `aarav.sharma@aaip.edu` | `Student@123` / `Student@2026!` | Semester 6 class schedule, classroom locations, enrolled courses, AI Copilot. |
+| **📋 Examination Cell** | `examcell@aaip.edu` | `Exam@123` / `ExamCell@2026!` | AI exam timetable optimizer, exam hall conflict interception, invigilator assignments. |
 
 *(All passwords are cryptographically hashed using PBKDF2-HMAC-SHA256 with individual salts; no plain-text passwords exist in the database).*
 

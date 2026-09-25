@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
             Autonomous Academic Intelligence Platform — Virtual Academic Operations Manager built for colleges, universities, and polytechnics.
           </p>
           <div className="text-xs font-mono text-sky-400">
-            SIH Problem Statement: AG002 — Agentic & Generative AI
+            Autonomous Academic Operations & Intelligent Scheduling
           </div>
         </div>
 
@@ -33,18 +33,18 @@ export const Footer: React.FC = () => {
         <div>
           <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-3">Institutional Roles</h4>
           <ul className="space-y-2 text-sm">
-            <li><span className="hover:text-slate-200">Administrator (Level 5)</span></li>
-            <li><span className="hover:text-slate-200">Head of Department (Level 4)</span></li>
-            <li><span className="hover:text-slate-200">Faculty Member (Level 3)</span></li>
-            <li><span className="hover:text-slate-200">Student Portal (Level 1)</span></li>
-            <li><span className="hover:text-slate-200">Examination Cell (Level 4)</span></li>
+            <li><span className="hover:text-slate-200">Administrator</span></li>
+            <li><span className="hover:text-slate-200">Head of Department</span></li>
+            <li><span className="hover:text-slate-200">Faculty Member</span></li>
+            <li><span className="hover:text-slate-200">Student Portal</span></li>
+            <li><span className="hover:text-slate-200">Examination Cell</span></li>
           </ul>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-6 border-t border-slate-800 text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4">
         <span>&copy; {new Date().getFullYear()} AAIP Autonomous Academic Intelligence Platform. All rights reserved.</span>
-        <span className="font-mono text-[11px] text-slate-400">Stage 1 Architecture Complete • Ready for Stage 2 Multi-Agent AI</span>
+        <span className="font-mono text-[11px] text-slate-400">Autonomous Academic Operations Platform</span>
       </div>
     </footer>
   );
