@@ -370,7 +370,7 @@ export const StudentManagement: React.FC = () => {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Aarav Sharma"
+              placeholder="e.g. Rithika"
               className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
             />
           </div>

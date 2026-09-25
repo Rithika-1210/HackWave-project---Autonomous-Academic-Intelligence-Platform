@@ -310,7 +310,7 @@ export const UserManagement: React.FC = () => {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Dr. Alan Turing"
+              placeholder="e.g. Ram"
               className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
             />
           </div>

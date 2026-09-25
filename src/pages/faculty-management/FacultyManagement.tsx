@@ -371,7 +371,7 @@ export const FacultyManagement: React.FC = () => {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="e.g. Dr. Alan Turing"
+              placeholder="e.g. Sham"
               className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-indigo-500"
             />
           </div>

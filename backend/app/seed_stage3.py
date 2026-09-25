@@ -61,12 +61,12 @@ def seed_stage3_data():
         # 1. Faculty Leave Scenario
         sim_1 = [dict(item) for item in original_schedule]
         for item in sim_1[:2]:
-            item["faculty_name"] = "Dr. Elena Vance (Substitute)"
-            item["status_note"] = "Substituted by Dr. Elena Vance due to sudden sick leave"
+            item["faculty_name"] = "Sham (Substitute)"
+            item["status_note"] = "Substituted by Sham due to sudden sick leave"
 
         sc1 = DigitalTwinScenario(
             scenario_id="SIM-CSE-001",
-            name="Emergency Leave Simulation for Prof. Vance (Monday)",
+            name="Emergency Leave Simulation for Sham (Monday)",
             scenario_type="Faculty Leave",
             department_id=dept_id,
             parameters_json=json.dumps({"faculty_id": 1, "day": "Monday", "reason": "Sudden medical absence"}),
@@ -119,7 +119,7 @@ def seed_stage3_data():
             "subject_name": "Autonomous AI Systems & Robotics",
             "subject_code": "CS-415",
             "faculty_id": 2,
-            "faculty_name": "Prof. Margaret Hamilton",
+            "faculty_name": "Kaviya",
             "classroom_id": 2,
             "room_number": "A-102",
             "room_capacity": 70,

@@ -40,6 +40,24 @@ try:
                 seed_stage3_data()
             except Exception as e3:
                 print(f"Stage 3 auto-seed notice: {e3}")
+        else:
+            # Sync role accounts to simple names: Ram, Kaviya, Sham, Rithika, Karthick
+            admin_u = db_session.query(User).filter(User.role == "admin").first()
+            if admin_u and admin_u.full_name != "Ram":
+                admin_u.full_name = "Ram"
+            hod_u = db_session.query(User).filter(User.role == "hod").first()
+            if hod_u and hod_u.full_name != "Kaviya":
+                hod_u.full_name = "Kaviya"
+            fac_u = db_session.query(User).filter(User.role == "faculty", User.email == "dr.elena@aaip.edu").first()
+            if fac_u and fac_u.full_name != "Sham":
+                fac_u.full_name = "Sham"
+            stu_u = db_session.query(User).filter(User.role == "student", User.email == "aarav.sharma@aaip.edu").first()
+            if stu_u and stu_u.full_name != "Rithika":
+                stu_u.full_name = "Rithika"
+            exam_u = db_session.query(User).filter(User.role == "exam_cell").first()
+            if exam_u and exam_u.full_name != "Karthick":
+                exam_u.full_name = "Karthick"
+            db_session.commit()
 except Exception as seed_err:
     print(f"Auto-seeding notice: {seed_err}")
 

@@ -326,7 +326,7 @@ export const DepartmentManagement: React.FC = () => {
               type="text"
               value={hodName}
               onChange={(e) => setHodName(e.target.value)}
-              placeholder="e.g. Prof. Margaret Hamilton"
+              placeholder="e.g. Kaviya"
               className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
             />
           </div>

@@ -314,10 +314,10 @@ def list_approvals(
             ApprovalRequest(
                 request_id="APP-002",
                 request_type="Rescheduling",
-                title="Emergency Substitution: Dr. Alan Turing Medical Leave",
+                title="Emergency Substitution: Sham Medical Leave",
                 status="Pending",
                 requester_id=current_user.id,
-                details_json=json.dumps({"substitute": "Dr. Ada Lovelace", "slots": 2})
+                details_json=json.dumps({"substitute": "Kaviya", "slots": 2})
             ),
             ApprovalRequest(
                 request_id="APP-003",

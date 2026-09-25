@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearance: 'CLEARANCE: LEVEL 5 (SUPERUSER)',
       title: 'Administrator Access',
       desc: 'Full governance: Global Digital Twin engine, system-wide optimization constraints, audit trail oversight, and RBAC policy control.',
-      welcomeName: 'Dr. Alan Turing — Vice Chancellor Office',
+      welcomeName: 'Ram — Administrator',
       roleTag: 'Chief Academic Operations Administrator',
       stats: [
         { num: '148', title: 'Classrooms Synced' },
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearance: 'CLEARANCE: LEVEL 4 (DEPARTMENTAL)',
       title: 'Head of Department (Computer Science)',
       desc: 'Departmental timetable approvals, faculty workload variance regulation, laboratory allocation, and leave substitution sign-offs.',
-      welcomeName: 'Prof. Margaret Hamilton — HOD CSE',
+      welcomeName: 'Kaviya — HOD CSE',
       roleTag: 'Department Head & Academic Council Member',
       stats: [
         { num: '38', title: 'Dept Faculty' },
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearance: 'CLEARANCE: LEVEL 3 (INSTRUCTIONAL)',
       title: 'Faculty Member Clearance',
       desc: 'Personalized schedule, automated leave substitution recommender, workload equity tracking, and room change requests.',
-      welcomeName: 'Dr. Elena Vance — Associate Professor',
+      welcomeName: 'Sham — Faculty Member',
       roleTag: 'Faculty of Computer Science & Engineering',
       stats: [
         { num: '16 h', title: 'Weekly Lectures' },
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearance: 'CLEARANCE: LEVEL 1 (LEARNER)',
       title: 'Student Access Portal',
       desc: 'Real-time timetable updates, instant classroom relocation alerts, examination seating coordinates, and elective collision resolvers.',
-      welcomeName: 'Aarav Sharma — Roll: CS22B049',
+      welcomeName: 'Rithika — Roll: CS22B049',
       roleTag: 'B.Tech Computer Science (Semester 6 - Section B)',
       stats: [
         { num: '24 h', title: 'Class Hours/wk' },
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearance: 'CLEARANCE: LEVEL 4 (EXAMINATION SECURITY)',
       title: 'Examination Cell Operations',
       desc: 'Autonomous exam scheduling engine, invigilator assignment matrix, hall capacity optimizer, and digital seating twins.',
-      welcomeName: 'Dr. Kenneth Stone — Exam Controller',
+      welcomeName: 'Karthick — Exam Controller',
       roleTag: 'Central Examination & Evaluation Cell',
       stats: [
         { num: '16', title: 'Exam Centers' },

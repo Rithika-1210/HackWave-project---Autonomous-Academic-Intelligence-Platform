@@ -107,7 +107,24 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
 
 @router.post("/login", response_model=TokenResponse)
 def login(login_data: LoginRequest, request: Request, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == login_data.email.lower().strip()).first()
+    req_email = login_data.email.lower().strip()
+    
+    # Aliases for simple user names
+    EMAIL_ALIASES = {
+        "ram@aaip.edu": "admin@aaip.edu",
+        "kaviya@aaip.edu": "hod.cse@aaip.edu",
+        "sham@aaip.edu": "dr.elena@aaip.edu",
+        "faculty@aaip.edu": "dr.elena@aaip.edu",
+        "rithika@aaip.edu": "aarav.sharma@aaip.edu",
+        "student@aaip.edu": "aarav.sharma@aaip.edu",
+        "karthick@aaip.edu": "examcell@aaip.edu",
+        "karthik@aaip.edu": "examcell@aaip.edu",
+    }
+    
+    user = db.query(User).filter(User.email == req_email).first()
+    if not user and req_email in EMAIL_ALIASES:
+        user = db.query(User).filter(User.email == EMAIL_ALIASES[req_email]).first()
+
     if not user or not verify_password(login_data.password, user.hashed_password):
         log_audit_action(
             db, None, "LOGIN_FAILED", "User",

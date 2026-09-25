@@ -37,7 +37,7 @@ def seed_database():
 
         print("Seeding Departments...")
         depts_data = [
-            ("Computer Science & Engineering", "CSE", "Prof. Margaret Hamilton", "Leading department in computing, algorithms, software engineering, and systems."),
+            ("Computer Science & Engineering", "CSE", "Kaviya", "Leading department in computing, algorithms, software engineering, and systems."),
             ("Electronics & Communication Engineering", "ECE", "Dr. Claude Shannon", "Focusing on signal processing, embedded systems, telecommunications, and VLSI."),
             ("Mechanical Engineering", "MECH", "Dr. Robert Goddard", "Core engineering in thermodynamics, structural robotics, CAD/CAM, and design."),
             ("Data Science & Artificial Intelligence", "DSAI", "Dr. Ada Lovelace", "Specialized division in deep learning, autonomous systems, and predictive modeling.")
@@ -94,7 +94,7 @@ def seed_database():
         admin_user = User(
             email="admin@aaip.edu",
             hashed_password=get_password_hash("Admin@2026!"),
-            full_name="Dr. Alan Turing",
+            full_name="Ram",
             role="admin",
             department_id=dept_map["CSE"].id,
             is_active=True
@@ -105,7 +105,7 @@ def seed_database():
         hod_user = User(
             email="hod.cse@aaip.edu",
             hashed_password=get_password_hash("Hod@2026!"),
-            full_name="Prof. Margaret Hamilton",
+            full_name="Kaviya",
             role="hod",
             department_id=dept_map["CSE"].id,
             is_active=True
@@ -116,7 +116,7 @@ def seed_database():
         faculty_user = User(
             email="dr.elena@aaip.edu",
             hashed_password=get_password_hash("Faculty@2026!"),
-            full_name="Dr. Elena Vance",
+            full_name="Sham",
             role="faculty",
             department_id=dept_map["CSE"].id,
             is_active=True
@@ -127,7 +127,7 @@ def seed_database():
         student_user = User(
             email="aarav.sharma@aaip.edu",
             hashed_password=get_password_hash("Student@2026!"),
-            full_name="Aarav Sharma",
+            full_name="Rithika",
             role="student",
             department_id=dept_map["CSE"].id,
             is_active=True
@@ -138,7 +138,7 @@ def seed_database():
         exam_user = User(
             email="examcell@aaip.edu",
             hashed_password=get_password_hash("ExamCell@2026!"),
-            full_name="Dr. Kenneth Stone",
+            full_name="Karthick",
             role="exam_cell",
             department_id=dept_map["CSE"].id,
             is_active=True
@@ -154,8 +154,8 @@ def seed_database():
 
         # Add Faculty Records
         faculty_records = [
-            (hod_user.id, "FAC-CSE-001", "Prof. Margaret Hamilton", "hod.cse@aaip.edu", "+91 98765 43210", dept_map["CSE"].id, "Professor & HOD", "Distributed Systems & Fault Tolerance", 16),
-            (faculty_user.id, "FAC-CSE-002", "Dr. Elena Vance", "dr.elena@aaip.edu", "+91 98765 43211", dept_map["CSE"].id, "Associate Professor", "Artificial Intelligence & Heuristics", 18),
+            (hod_user.id, "FAC-CSE-001", "Kaviya", "hod.cse@aaip.edu", "+91 98765 43210", dept_map["CSE"].id, "Professor & HOD", "Distributed Systems & Fault Tolerance", 16),
+            (faculty_user.id, "FAC-CSE-002", "Sham", "dr.elena@aaip.edu", "+91 98765 43211", dept_map["CSE"].id, "Associate Professor", "Artificial Intelligence & Heuristics", 18),
             (None, "FAC-CSE-003", "Dr. Linus Torvalds", "linus.t@aaip.edu", "+91 98765 43212", dept_map["CSE"].id, "Professor", "Kernel Architecture & Systems Programming", 14),
             (None, "FAC-ECE-001", "Dr. Claude Shannon", "shannon.c@aaip.edu", "+91 98765 43213", dept_map["ECE"].id, "Professor & HOD", "Information Theory & Digital Comms", 16),
             (None, "FAC-DSAI-001", "Dr. Ada Lovelace", "ada.l@aaip.edu", "+91 98765 43214", dept_map["DSAI"].id, "Associate Professor", "Analytical Engine Algorithms", 18),
@@ -175,7 +175,7 @@ def seed_database():
 
         print("Seeding Students...")
         students_data = [
-            (student_user.id, "STU-2022-CS049", "Aarav Sharma", "aarav.sharma@aaip.edu", "+91 91234 56780", dept_map["CSE"].id, course_map["BTECH-CSE"].id, 6, "Batch 2022-2026", 2022),
+            (student_user.id, "STU-2022-CS049", "Rithika", "aarav.sharma@aaip.edu", "+91 91234 56780", dept_map["CSE"].id, course_map["BTECH-CSE"].id, 6, "Batch 2022-2026", 2022),
             (None, "STU-2022-CS050", "Priya Nair", "priya.nair@aaip.edu", "+91 91234 56781", dept_map["CSE"].id, course_map["BTECH-CSE"].id, 6, "Batch 2022-2026", 2022),
             (None, "STU-2023-EC012", "Rohan Verma", "rohan.v@aaip.edu", "+91 91234 56782", dept_map["ECE"].id, course_map["BTECH-ECE"].id, 4, "Batch 2023-2027", 2023),
             (None, "STU-2024-DS008", "Ananya Iyer", "ananya.i@aaip.edu", "+91 91234 56783", dept_map["DSAI"].id, course_map["MTECH-AI"].id, 2, "Batch 2024-2026", 2024),
@@ -306,11 +306,11 @@ def seed_database():
         print("\n=======================================================")
         print("AAIP DATABASE SEEDED SUCCESSFULLY WITH DEMO ACCOUNTS!")
         print("=======================================================")
-        print("1. Administrator:   admin@aaip.edu        / Admin@2026!")
-        print("2. HOD (CSE):       hod.cse@aaip.edu      / Hod@2026!")
-        print("3. Faculty:         dr.elena@aaip.edu     / Faculty@2026!")
-        print("4. Student:         aarav.sharma@aaip.edu / Student@2026!")
-        print("5. Exam Cell:       examcell@aaip.edu     / ExamCell@2026!")
+        print("1. Administrator (Ram):     admin@aaip.edu / ram@aaip.edu        / Admin@2026!")
+        print("2. HOD CSE (Kaviya):        hod.cse@aaip.edu / kaviya@aaip.edu   / Hod@2026!")
+        print("3. Faculty (Sham):          dr.elena@aaip.edu / sham@aaip.edu    / Faculty@2026!")
+        print("4. Student (Rithika):       aarav.sharma@aaip.edu / rithika@aaip.edu / Student@2026!")
+        print("5. Exam Cell (Karthick):    examcell@aaip.edu / karthick@aaip.edu / ExamCell@2026!")
         print("=======================================================\n")
 
     except Exception as e:
