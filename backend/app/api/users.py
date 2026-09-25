@@ -35,12 +35,13 @@ def create_user(
     if existing:
         raise HTTPException(status_code=400, detail="User with this email already exists")
     
+    target_dept_id = None if user_in.role == "admin" else user_in.department_id
     new_user = User(
         email=user_in.email.lower().strip(),
         hashed_password=get_password_hash(user_in.password),
         full_name=user_in.full_name,
         role=user_in.role,
-        department_id=user_in.department_id,
+        department_id=target_dept_id,
         is_active=user_in.is_active
     )
     db.add(new_user)
@@ -71,7 +72,9 @@ def update_user(
         user.full_name = user_in.full_name
     if user_in.role is not None:
         user.role = user_in.role
-    if user_in.department_id is not None:
+    if user.role == "admin" or user_in.role == "admin":
+        user.department_id = None
+    elif user_in.department_id is not None:
         user.department_id = user_in.department_id
     if user_in.is_active is not None:
         user.is_active = user_in.is_active

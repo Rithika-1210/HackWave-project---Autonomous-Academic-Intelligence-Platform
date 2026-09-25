@@ -33,10 +33,14 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
             detail=f"Invalid institutional role. Must be one of: {', '.join(valid_roles)}"
         )
     
-    dept_id = user_in.department_id
-    if not dept_id:
+    # System Administrator is institutional overall admin across all departments
+    if user_in.role == "admin":
+        dept_id = None
+    elif not user_in.department_id:
         first_dept = db.query(Department).first()
         dept_id = first_dept.id if first_dept else None
+    else:
+        dept_id = user_in.department_id
 
     new_user = User(
         email=email_clean,
@@ -180,7 +184,9 @@ def update_profile(
         if existing:
             raise HTTPException(status_code=400, detail="Institutional email is already taken by another account")
         current_user.email = new_email
-    if profile_data.department_id is not None:
+    if current_user.role == "admin":
+        current_user.department_id = None
+    elif profile_data.department_id is not None:
         current_user.department_id = profile_data.department_id
     if profile_data.password:
         current_user.hashed_password = get_password_hash(profile_data.password)

@@ -43,8 +43,11 @@ try:
         else:
             # Sync role accounts to simple names: Ram, Kaviya, Sham, Rithika, Karthick
             admin_u = db_session.query(User).filter(User.role == "admin").first()
-            if admin_u and admin_u.full_name != "Ram":
-                admin_u.full_name = "Ram"
+            if admin_u:
+                if admin_u.full_name != "Ram":
+                    admin_u.full_name = "Ram"
+                if admin_u.department_id is not None:
+                    admin_u.department_id = None
             hod_u = db_session.query(User).filter(User.role == "hod").first()
             if hod_u and hod_u.full_name != "Kaviya":
                 hod_u.full_name = "Kaviya"

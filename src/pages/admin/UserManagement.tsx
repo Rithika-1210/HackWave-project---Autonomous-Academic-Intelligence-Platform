@@ -7,7 +7,7 @@ import { departmentsApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   UserCog, Plus, Search, Filter, Edit, Trash2, KeyRound,
-  Shield, CheckCircle2, XCircle, AlertCircle
+  Shield, CheckCircle2, XCircle, AlertCircle, Building2
 } from 'lucide-react';
 
 export const UserManagement: React.FC = () => {
@@ -81,7 +81,7 @@ export const UserManagement: React.FC = () => {
     setEmail(u.email);
     setFullName(u.full_name);
     setRole(u.role);
-    setDepartmentId(u.department_id || undefined);
+    setDepartmentId(u.role === 'admin' ? undefined : (u.department_id || undefined));
     setPassword('');
     setIsActive(u.is_active);
     setModalError(null);
@@ -102,6 +102,8 @@ export const UserManagement: React.FC = () => {
       const token = localStorage.getItem('aaip_token');
       const headers = { Authorization: `Bearer ${token}` };
 
+      const targetDeptId = role === 'admin' ? null : (departmentId || null);
+
       if (editingUser) {
         await axios.put(
           `/api/users/${editingUser.id}`,
@@ -109,7 +111,7 @@ export const UserManagement: React.FC = () => {
             email,
             full_name: fullName,
             role,
-            department_id: departmentId || null,
+            department_id: targetDeptId,
             is_active: isActive,
             password: password || undefined
           },
@@ -123,7 +125,7 @@ export const UserManagement: React.FC = () => {
             password,
             full_name: fullName,
             role,
-            department_id: departmentId || null,
+            department_id: targetDeptId,
             is_active: isActive
           },
           { headers }
@@ -246,6 +248,11 @@ export const UserManagement: React.FC = () => {
                       <span className="font-mono text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase border bg-slate-100 text-slate-800 border-slate-200">
                         {u.role}
                       </span>
+                      {u.role === 'admin' && (
+                        <span className="block text-[10px] text-sky-600 font-medium mt-0.5">
+                          All Departments
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4">
                       {u.is_active ? (
@@ -332,7 +339,11 @@ export const UserManagement: React.FC = () => {
               <label className="block text-xs font-bold text-slate-700">Role Clearance</label>
               <select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) => {
+                  const newRole = e.target.value;
+                  setRole(newRole);
+                  if (newRole === 'admin') setDepartmentId(undefined);
+                }}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
                 <option value="admin">Administrator</option>
@@ -342,19 +353,29 @@ export const UserManagement: React.FC = () => {
                 <option value="exam_cell">Exam Cell Coordinator</option>
               </select>
             </div>
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700">Department</label>
-              <select
-                value={departmentId || ''}
-                onChange={(e) => setDepartmentId(e.target.value ? Number(e.target.value) : undefined)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
-              >
-                <option value="">-- Institutional Global --</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
-                ))}
-              </select>
-            </div>
+            {role !== 'admin' ? (
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700">Department</label>
+                <select
+                  value={departmentId || ''}
+                  onChange={(e) => setDepartmentId(e.target.value ? Number(e.target.value) : undefined)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
+                >
+                  <option value="">-- Institutional Global --</option>
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700">Institutional Scope</label>
+                <div className="w-full px-3 py-2 rounded-xl bg-sky-50/70 border border-sky-200 text-xs text-sky-800 font-medium flex items-center gap-1.5 h-[34px]">
+                  <Building2 className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                  <span className="truncate">All Departments</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-1">

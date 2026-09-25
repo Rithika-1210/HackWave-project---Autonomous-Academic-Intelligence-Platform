@@ -96,7 +96,7 @@ def seed_database():
             hashed_password=get_password_hash("Admin@2026!"),
             full_name="Ram",
             role="admin",
-            department_id=dept_map["CSE"].id,
+            department_id=None,
             is_active=True
         )
         db.add(admin_user)

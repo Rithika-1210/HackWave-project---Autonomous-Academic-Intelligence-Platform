@@ -136,7 +136,7 @@ export const LoginPage: React.FC = () => {
         full_name: signUpFullName.trim(),
         email: signUpEmail.trim(),
         role: signUpRole,
-        department_id: signUpDeptId,
+        department_id: signUpRole === 'admin' ? null : signUpDeptId,
         password: signUpPassword,
       });
 
@@ -402,28 +402,37 @@ export const LoginPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Department Selection */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">
-                  Assigned Department
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Building2 className="w-4 h-4" />
+              {/* Department Selection (Excluded for Overall Administrator) */}
+              {signUpRole !== 'admin' ? (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Assigned Department
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <Building2 className="w-4 h-4" />
+                    </div>
+                    <select
+                      value={signUpDeptId}
+                      onChange={(e) => setSignUpDeptId(Number(e.target.value))}
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                    >
+                      {departments.map((d) => (
+                        <option key={d.id} value={d.id} className="bg-white text-slate-900">
+                          {d.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <select
-                    value={signUpDeptId}
-                    onChange={(e) => setSignUpDeptId(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                  >
-                    {departments.map((d) => (
-                      <option key={d.id} value={d.id} className="bg-white text-slate-900">
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
                 </div>
-              </div>
+              ) : (
+                <div className="p-3 rounded-2xl bg-sky-50/70 border border-sky-200 text-xs text-sky-800 flex items-center gap-2.5">
+                  <Building2 className="w-4 h-4 text-sky-600 shrink-0" />
+                  <span className="leading-relaxed">
+                    <strong>Overall Administrator:</strong> Governs all departments and institutional divisions.
+                  </span>
+                </div>
+              )}
 
               {/* Password Fields in 2 Columns */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
