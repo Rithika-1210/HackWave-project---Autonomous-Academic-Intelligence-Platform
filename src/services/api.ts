@@ -47,6 +47,20 @@ export const authApi = {
     const res = await api.post<{ access_token: string; token_type: string; user: User }>('/auth/login', { email, password });
     return res.data;
   },
+  register: async (userData: {
+    email: string;
+    password: string;
+    full_name: string;
+    role: UserRole;
+    department_id?: number | null;
+  }) => {
+    const res = await api.post<{ access_token: string; token_type: string; user: User }>('/auth/register', userData);
+    return res.data;
+  },
+  getPublicDepartments: async () => {
+    const res = await api.get<{ id: number; name: string; code: string }[]>('/auth/departments');
+    return res.data;
+  },
   getMe: async () => {
     const res = await api.get<User>('/auth/me');
     return res.data;

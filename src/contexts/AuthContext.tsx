@@ -8,6 +8,13 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, pass: string) => Promise<User>;
+  register: (userData: {
+    email: string;
+    password: string;
+    full_name: string;
+    role: UserRole;
+    department_id?: number | null;
+  }) => Promise<User>;
   logout: () => void;
   quickSwitchRole: (role: UserRole) => Promise<User>;
 }
@@ -60,6 +67,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return data.user;
   };
 
+  const register = async (userData: {
+    email: string;
+    password: string;
+    full_name: string;
+    role: UserRole;
+    department_id?: number | null;
+  }): Promise<User> => {
+    const data = await authApi.register(userData);
+    localStorage.setItem('aaip_token', data.access_token);
+    localStorage.setItem('aaip_user', JSON.stringify(data.user));
+    setToken(data.access_token);
+    setUser(data.user);
+    return data.user;
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -85,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user && !!token,
         loading,
         login,
+        register,
         logout,
         quickSwitchRole,
       }}
