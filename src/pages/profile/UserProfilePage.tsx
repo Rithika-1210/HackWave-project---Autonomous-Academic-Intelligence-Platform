@@ -5,8 +5,7 @@ import { Department, UserCertificate, UserResume, UserMaterial } from '@/types';
 import {
   User, Mail, Phone, Building2, Briefcase, Calendar, Shield, Award,
   FileText, Upload, Download, Trash2, Plus, CheckCircle2, AlertCircle,
-  Camera, ExternalLink, Lock, Save, FileCheck, Eye, BookOpen, Sparkles, X,
-  FolderOpen, FileUp, Check
+  Camera, Lock, Save, Eye, BookOpen, X, FileUp
 } from 'lucide-react';
 
 export const UserProfilePage: React.FC = () => {
@@ -354,7 +353,6 @@ export const UserProfilePage: React.FC = () => {
       localStorage.setItem(`aaip_certs_${user.id}`, JSON.stringify(updated));
     }
 
-    // Reset Modal
     setCertTitle('');
     setCertIssuer('');
     setCertDate('');
@@ -444,31 +442,31 @@ export const UserProfilePage: React.FC = () => {
       
       {/* Toast Feedbacks */}
       {saveSuccess && (
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-sm flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-sm flex items-center justify-between shadow-lg">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
             <span className="font-semibold">{saveSuccess}</span>
           </div>
-          <button onClick={() => setSaveSuccess(null)} className="text-emerald-600 hover:text-emerald-800">
+          <button onClick={() => setSaveSuccess(null)} className="text-emerald-400 hover:text-emerald-200">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-700 text-sm flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-sm flex items-center justify-between shadow-lg">
           <div className="flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
             <span className="font-semibold">{errorMessage}</span>
           </div>
-          <button onClick={() => setErrorMessage(null)} className="text-rose-600 hover:text-rose-800">
+          <button onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-200">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Hero Profile Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-900 via-sky-950 to-slate-900 border border-slate-800 p-6 md:p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-900 via-sky-950 to-slate-900 border border-slate-800 p-6 md:p-8 text-white shadow-xl shadow-black/30">
         <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
@@ -512,21 +510,21 @@ export const UserProfilePage: React.FC = () => {
             </div>
             
             <p className="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              {designation} &bull; {user?.email}
+              {designation} &bull; <span className="font-mono text-slate-400">{user?.email}</span>
             </p>
 
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2 text-xs text-slate-400 font-mono">
               <div className="flex items-center gap-1.5">
                 <Shield className="w-3.5 h-3.5 text-sky-400" />
-                <span>RBAC Verified</span>
+                <span className="text-slate-300">RBAC Verified</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5 text-amber-400" />
-                <span>{certificates.length} Credentials</span>
+                <span className="text-slate-300">{certificates.length} Credentials</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{materials.length} Academic Materials</span>
+                <span className="text-slate-300">{materials.length} Academic Materials</span>
               </div>
             </div>
           </div>
@@ -537,7 +535,7 @@ export const UserProfilePage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleRemoveAvatar}
-                className="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 text-rose-300 border border-slate-700 hover:border-rose-500/40 text-xs font-semibold transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-rose-300 border border-slate-700 hover:border-rose-500/40 text-xs font-semibold transition-all cursor-pointer"
               >
                 Remove Picture
               </button>
@@ -548,14 +546,14 @@ export const UserProfilePage: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-px">
+      <div className="flex items-center gap-2 border-b border-slate-800 overflow-x-auto pb-px">
         <button
           type="button"
           onClick={() => setActiveTab('profile')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'profile'
-              ? 'border-sky-600 text-sky-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-sky-400 text-sky-400'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <User className="w-4 h-4" />
@@ -567,13 +565,13 @@ export const UserProfilePage: React.FC = () => {
           onClick={() => setActiveTab('certificates')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'certificates'
-              ? 'border-sky-600 text-sky-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-sky-400 text-sky-400'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <Award className="w-4 h-4" />
           <span>Certificates & Credentials</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700 font-bold">
+          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-800 text-sky-300 border border-slate-700 font-bold">
             {certificates.length}
           </span>
         </button>
@@ -583,12 +581,12 @@ export const UserProfilePage: React.FC = () => {
           onClick={() => setActiveTab('resume')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'resume'
-              ? 'border-sky-600 text-sky-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-sky-400 text-sky-400'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span>Resume / Curriculum Vitae</span>
+          <span>Resume & Curriculum Vitae</span>
         </button>
 
         <button
@@ -596,13 +594,13 @@ export const UserProfilePage: React.FC = () => {
           onClick={() => setActiveTab('materials')}
           className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'materials'
-              ? 'border-sky-600 text-sky-600'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-sky-400 text-sky-400'
+              : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
           <BookOpen className="w-4 h-4" />
           <span>Academic Materials</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-700 font-bold">
+          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-800 text-sky-300 border border-slate-700 font-bold">
             {materials.length}
           </span>
         </button>
@@ -611,18 +609,19 @@ export const UserProfilePage: React.FC = () => {
       {/* TAB 1: PROFILE SETTINGS */}
       {activeTab === 'profile' && (
         <form onSubmit={handleSaveProfile} className="space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-6">
-            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
-              Institutional Profile Information
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 p-6 md:p-8 shadow-xl shadow-black/40 space-y-6">
+            <h3 className="text-base font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+              <User className="w-4 h-4 text-sky-400" />
+              <span>Institutional Profile Information</span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Full Name */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-300">Full Name</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -630,16 +629,16 @@ export const UserProfilePage: React.FC = () => {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all"
                   />
                 </div>
               </div>
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">Institutional Email</label>
+                <label className="block text-xs font-semibold text-slate-300">Institutional Email</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Mail className="w-4 h-4" />
                   </div>
                   <input
@@ -647,57 +646,57 @@ export const UserProfilePage: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all font-mono"
                   />
                 </div>
               </div>
 
               {/* Phone */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">Contact Number</label>
+                <label className="block text-xs font-semibold text-slate-300">Contact Number</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Phone className="w-4 h-4" />
                   </div>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all font-mono"
                   />
                 </div>
               </div>
 
               {/* Designation */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">Designation / Role Title</label>
+                <label className="block text-xs font-semibold text-slate-300">Designation / Role Title</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Briefcase className="w-4 h-4" />
                   </div>
                   <input
                     type="text"
                     value={designation}
                     onChange={(e) => setDesignation(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all"
                   />
                 </div>
               </div>
 
               {/* Department */}
               <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700">Assigned Department</label>
+                <label className="block text-xs font-semibold text-slate-300">Assigned Department</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Building2 className="w-4 h-4" />
                   </div>
                   <select
                     value={departmentId}
                     onChange={(e) => setDepartmentId(Number(e.target.value))}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all cursor-pointer bg-white"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all cursor-pointer"
                   >
                     {departments.map((d) => (
-                      <option key={d.id} value={d.id}>
+                      <option key={d.id} value={d.id} className="bg-slate-900 text-white">
                         {d.name} ({d.code})
                       </option>
                     ))}
@@ -707,14 +706,14 @@ export const UserProfilePage: React.FC = () => {
 
               {/* Bio */}
               <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700">
+                <label className="block text-xs font-semibold text-slate-300">
                   Academic Biography & Specializations
                 </label>
                 <textarea
                   rows={3}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                  className="w-full p-3.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all leading-relaxed"
                 />
               </div>
 
@@ -722,32 +721,32 @@ export const UserProfilePage: React.FC = () => {
           </div>
 
           {/* Password & Security Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-6">
-            <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <Lock className="w-4 h-4 text-sky-600" />
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 p-6 md:p-8 shadow-xl shadow-black/40 space-y-6">
+            <h3 className="text-base font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
+              <Lock className="w-4 h-4 text-sky-400" />
               <span>Change Access Password</span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">New Password</label>
+                <label className="block text-xs font-semibold text-slate-300">New Password</label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Leave empty to keep current password"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all font-mono"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">Confirm New Password</label>
+                <label className="block text-xs font-semibold text-slate-300">Confirm New Password</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-slate-900 text-sm focus:outline-hidden focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-hidden focus:border-sky-400 focus:ring-1 focus:ring-sky-400 transition-all font-mono"
                 />
               </div>
             </div>
@@ -757,7 +756,7 @@ export const UserProfilePage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-bold text-sm shadow-md shadow-sky-600/20 hover:shadow-lg transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-bold text-sm shadow-lg shadow-sky-600/30 hover:shadow-xl transition-all cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{loading ? 'Saving Changes...' : 'Save Profile Changes'}</span>
@@ -769,17 +768,17 @@ export const UserProfilePage: React.FC = () => {
       {/* TAB 2: CERTIFICATES & CREDENTIALS */}
       {activeTab === 'certificates' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl shadow-black/40">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Academic & Professional Certifications</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="text-base font-bold text-white">Academic & Professional Certifications</h3>
+              <p className="text-xs text-slate-400 mt-0.5">
                 Verified institutional qualifications, pedagogy training, and technological accreditations.
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowCertModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20 transition-all cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Add Certificate</span>
@@ -791,44 +790,44 @@ export const UserProfilePage: React.FC = () => {
             {certificates.map((cert) => (
               <div
                 key={cert.id}
-                className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition-all space-y-4 group relative"
+                className="bg-slate-900 rounded-3xl border border-slate-800 p-6 shadow-xl shadow-black/40 hover:border-slate-700 transition-all space-y-4 group relative"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/20">
-                      <Award className="w-5 h-5" />
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+                      <Award className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors">
+                      <h4 className="text-sm font-bold text-white leading-snug group-hover:text-sky-400 transition-colors">
                         {cert.title}
                       </h4>
-                      <p className="text-xs text-slate-500">{cert.issuer}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{cert.issuer}</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleDeleteCert(cert.id)}
-                    className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                    className="text-slate-500 hover:text-rose-400 p-1.5 rounded-xl hover:bg-rose-500/10 transition-colors cursor-pointer"
                     title="Delete Certificate"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-50 p-3 rounded-xl border border-slate-100 text-slate-600">
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-slate-950/70 p-3 rounded-2xl border border-slate-800/80 text-slate-300">
                   <div>
-                    <span className="text-[10px] uppercase text-slate-400 block">Issue Date</span>
-                    <span>{cert.issueDate}</span>
+                    <span className="text-[10px] uppercase text-slate-500 block">Issue Date</span>
+                    <span className="text-slate-300">{cert.issueDate}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase text-slate-400 block">Credential ID</span>
-                    <span className="truncate block font-bold text-slate-700">{cert.credentialId}</span>
+                    <span className="text-[10px] uppercase text-slate-500 block">Credential ID</span>
+                    <span className="truncate block font-bold text-sky-400">{cert.credentialId}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
-                  <span className="flex items-center gap-1.5 text-emerald-600 font-medium font-mono text-[11px]">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-medium font-mono text-[11px]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                     Verified Document ({cert.fileSize || '1.1 MB'})
                   </span>
                   <a
@@ -837,10 +836,10 @@ export const UserProfilePage: React.FC = () => {
                     onClick={(e) => {
                       if (!cert.fileData) {
                         e.preventDefault();
-                        alert('Certificate document downloaded successfully.');
+                        alert('Certificate credential document downloaded.');
                       }
                     }}
-                    className="inline-flex items-center gap-1 text-sky-600 hover:text-sky-700 font-bold transition-colors"
+                    className="inline-flex items-center gap-1.5 text-sky-400 hover:text-sky-300 font-bold transition-colors cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -855,11 +854,11 @@ export const UserProfilePage: React.FC = () => {
       {/* TAB 3: RESUME / CV */}
       {activeTab === 'resume' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div className="bg-slate-900 rounded-3xl border border-slate-800 p-6 md:p-8 shadow-xl shadow-black/40 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Curriculum Vitae (CV) & Resume Document</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-base font-bold text-white">Curriculum Vitae (CV) & Resume Document</h3>
+                <p className="text-xs text-slate-400 mt-0.5">
                   Official academic career summary, research background, and institutional credentials.
                 </p>
               </div>
@@ -884,15 +883,15 @@ export const UserProfilePage: React.FC = () => {
 
             {/* Current Resume Display Card */}
             {resume && (
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0 border border-sky-500/20">
+                  <div className="w-12 h-12 rounded-2xl bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/30">
                     <FileText className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">{resume.fileName}</h4>
-                    <p className="text-xs text-slate-500 font-mono">
-                      File Size: {resume.fileSize} &bull; Updated: {resume.uploadedAt}
+                    <h4 className="text-sm font-bold text-white">{resume.fileName}</h4>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">
+                      File Size: <span className="text-slate-300">{resume.fileSize}</span> &bull; Updated: <span className="text-slate-300">{resume.uploadedAt}</span>
                     </p>
                   </div>
                 </div>
@@ -901,9 +900,9 @@ export const UserProfilePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => alert(`Previewing official resume for ${user?.full_name}`)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 text-xs font-semibold transition-all cursor-pointer"
                   >
-                    <Eye className="w-4 h-4 text-slate-500" />
+                    <Eye className="w-4 h-4 text-slate-400" />
                     <span>Preview</span>
                   </button>
                   <button
@@ -921,10 +920,10 @@ export const UserProfilePage: React.FC = () => {
             {/* Drag & Drop Zone */}
             <div
               onClick={() => resumeInputRef.current?.click()}
-              className="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-2xl p-8 text-center cursor-pointer hover:bg-sky-50/30 transition-all group"
+              className="border-2 border-dashed border-slate-700 hover:border-sky-400 rounded-2xl p-8 text-center cursor-pointer hover:bg-slate-800/40 transition-all group"
             >
-              <Upload className="w-8 h-8 text-slate-400 group-hover:text-sky-600 mx-auto transition-colors" />
-              <p className="text-xs font-bold text-slate-700 mt-2">
+              <Upload className="w-8 h-8 text-slate-500 group-hover:text-sky-400 mx-auto transition-colors" />
+              <p className="text-xs font-bold text-slate-200 mt-2">
                 Click here or drag & drop to update your resume document
               </p>
               <p className="text-[11px] text-slate-400 mt-1 font-mono">
@@ -933,7 +932,7 @@ export const UserProfilePage: React.FC = () => {
             </div>
 
             {/* Key Skills & Competencies */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
+            <div className="pt-4 border-t border-slate-800 space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
                 Core Academic & Technical Skills
               </h4>
@@ -942,13 +941,13 @@ export const UserProfilePage: React.FC = () => {
                 {skills.map((skill) => (
                   <span
                     key={skill}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-200 text-xs font-semibold border border-slate-700 shadow-2xs"
                   >
                     <span>{skill}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveSkill(skill)}
-                      className="text-slate-400 hover:text-rose-600"
+                      className="text-slate-400 hover:text-rose-400 cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -962,13 +961,13 @@ export const UserProfilePage: React.FC = () => {
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
                   placeholder="Add skill (e.g. Cloud Architecture, AI Ethics)..."
-                  className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
+                  className="flex-1 px-3.5 py-2 rounded-xl bg-slate-950/70 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); }}}
                 />
                 <button
                   type="button"
                   onClick={handleAddSkill}
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
                   Add
                 </button>
@@ -982,17 +981,17 @@ export const UserProfilePage: React.FC = () => {
       {/* TAB 4: ACADEMIC MATERIALS */}
       {activeTab === 'materials' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl shadow-black/40">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Academic Teaching & Study Materials</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="text-base font-bold text-white">Academic Teaching & Study Materials</h3>
+              <p className="text-xs text-slate-400 mt-0.5">
                 Course lecture notes, syllabi, slide decks, lab manuals, and research publications.
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowMaterialModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold shadow-md shadow-sky-600/20 transition-all cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Publish Material</span>
@@ -1008,8 +1007,8 @@ export const UserProfilePage: React.FC = () => {
                 onClick={() => setMaterialFilter(cat)}
                 className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer whitespace-nowrap ${
                   materialFilter === cat
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                    ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
+                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
                 }`}
               >
                 {cat}
@@ -1022,21 +1021,21 @@ export const UserProfilePage: React.FC = () => {
             {filteredMaterials.map((mat) => (
               <div
                 key={mat.id}
-                className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition-all space-y-3.5 group"
+                className="bg-slate-900 rounded-3xl border border-slate-800 p-6 shadow-xl shadow-black/40 hover:border-slate-700 transition-all space-y-3.5 group"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0 border border-sky-500/20">
-                      <BookOpen className="w-5 h-5" />
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-2xl bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/30">
+                      <BookOpen className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider font-mono px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider font-mono px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-300 border border-sky-400/30">
                           {mat.category}
                         </span>
                         <span className="text-xs text-slate-400 font-mono">{mat.subject}</span>
                       </div>
-                      <h4 className="text-sm font-bold text-slate-900 mt-1 leading-snug group-hover:text-sky-600 transition-colors">
+                      <h4 className="text-sm font-bold text-white mt-1 leading-snug group-hover:text-sky-400 transition-colors">
                         {mat.title}
                       </h4>
                     </div>
@@ -1044,7 +1043,7 @@ export const UserProfilePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleDeleteMaterial(mat.id)}
-                    className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                    className="text-slate-500 hover:text-rose-400 p-1.5 rounded-xl hover:bg-rose-500/10 transition-colors cursor-pointer"
                     title="Delete Material"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -1052,13 +1051,13 @@ export const UserProfilePage: React.FC = () => {
                 </div>
 
                 {mat.description && (
-                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
                     {mat.description}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500 font-mono">
-                  <span>{mat.fileName} ({mat.fileSize})</span>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs text-slate-400 font-mono">
+                  <span>{mat.fileName} <span className="text-slate-500">({mat.fileSize})</span></span>
                   <a
                     href={mat.fileData || '#'}
                     download={mat.fileName}
@@ -1068,7 +1067,7 @@ export const UserProfilePage: React.FC = () => {
                         alert(`Downloaded material: ${mat.title}`);
                       }
                     }}
-                    className="inline-flex items-center gap-1 text-sky-600 hover:text-sky-700 font-bold transition-colors"
+                    className="inline-flex items-center gap-1.5 text-sky-400 hover:text-sky-300 font-bold transition-colors cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Download</span>
@@ -1082,84 +1081,84 @@ export const UserProfilePage: React.FC = () => {
 
       {/* ADD CERTIFICATE MODAL */}
       {showCertModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full space-y-5 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900">Add Certificate or Credential</h3>
-              <button onClick={() => setShowCertModal(false)} className="text-slate-400 hover:text-slate-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs">
+          <div className="bg-slate-900 rounded-3xl p-6 md:p-8 max-w-lg w-full space-y-5 shadow-2xl border border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-base font-bold text-white">Add Certificate or Credential</h3>
+              <button onClick={() => setShowCertModal(false)} className="text-slate-400 hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleAddCertificate} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Certificate Title *</label>
+                <label className="font-semibold text-slate-300">Certificate Title *</label>
                 <input
                   type="text"
                   required
                   value={certTitle}
                   onChange={(e) => setCertTitle(e.target.value)}
                   placeholder="e.g. AWS Certified Solutions Architect"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Issuing Organization *</label>
+                <label className="font-semibold text-slate-300">Issuing Organization *</label>
                 <input
                   type="text"
                   required
                   value={certIssuer}
                   onChange={(e) => setCertIssuer(e.target.value)}
                   placeholder="e.g. Amazon Web Services / Stanford University"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-semibold text-slate-700">Issue Date</label>
+                  <label className="font-semibold text-slate-300">Issue Date</label>
                   <input
                     type="date"
                     value={certDate}
                     onChange={(e) => setCertDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white focus:outline-hidden focus:border-sky-400"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="font-semibold text-slate-700">Credential ID / Reference</label>
+                  <label className="font-semibold text-slate-300">Credential ID / Reference</label>
                   <input
                     type="text"
                     value={certCredentialId}
                     onChange={(e) => setCertCredentialId(e.target.value)}
                     placeholder="e.g. AWS-2026-9021"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500 font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400 font-mono"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Certificate File (PDF or Image)</label>
+                <label className="font-semibold text-slate-300">Certificate File (PDF or Image)</label>
                 <input
                   ref={certificateFileInputRef}
                   type="file"
                   accept=".pdf,image/*"
                   onChange={handleCertificateFileChange}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"
+                  className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-sky-300 hover:file:bg-slate-700"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowCertModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all shadow-md shadow-sky-600/20"
+                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all shadow-md shadow-sky-600/20 cursor-pointer"
                 >
                   Save Certificate
                 </button>
@@ -1171,88 +1170,88 @@ export const UserProfilePage: React.FC = () => {
 
       {/* ADD MATERIAL MODAL */}
       {showMaterialModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full space-y-5 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900">Publish Academic Material</h3>
-              <button onClick={() => setShowMaterialModal(false)} className="text-slate-400 hover:text-slate-700">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs">
+          <div className="bg-slate-900 rounded-3xl p-6 md:p-8 max-w-lg w-full space-y-5 shadow-2xl border border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-base font-bold text-white">Publish Academic Material</h3>
+              <button onClick={() => setShowMaterialModal(false)} className="text-slate-400 hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleAddMaterial} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Material Title *</label>
+                <label className="font-semibold text-slate-300">Material Title *</label>
                 <input
                   type="text"
                   required
                   value={matTitle}
                   onChange={(e) => setMatTitle(e.target.value)}
                   placeholder="e.g. Distributed Systems Unit 3 Lecture Notes"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="font-semibold text-slate-700">Category *</label>
+                  <label className="font-semibold text-slate-300">Category *</label>
                   <select
                     value={matCategory}
                     onChange={(e) => setMatCategory(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500 bg-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white focus:outline-hidden focus:border-sky-400"
                   >
-                    <option value="Lecture Notes">Lecture Notes</option>
-                    <option value="Slide Deck">Slide Deck</option>
-                    <option value="Lab Manual">Lab Manual</option>
-                    <option value="Research Paper">Research Paper</option>
-                    <option value="Syllabus">Syllabus</option>
+                    <option value="Lecture Notes" className="bg-slate-900 text-white">Lecture Notes</option>
+                    <option value="Slide Deck" className="bg-slate-900 text-white">Slide Deck</option>
+                    <option value="Lab Manual" className="bg-slate-900 text-white">Lab Manual</option>
+                    <option value="Research Paper" className="bg-slate-900 text-white">Research Paper</option>
+                    <option value="Syllabus" className="bg-slate-900 text-white">Syllabus</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="font-semibold text-slate-700">Subject / Course</label>
+                  <label className="font-semibold text-slate-300">Subject / Course</label>
                   <input
                     type="text"
                     value={matSubject}
                     onChange={(e) => setMatSubject(e.target.value)}
                     placeholder="e.g. CS301 Systems"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Description / Summary</label>
+                <label className="font-semibold text-slate-300">Description / Summary</label>
                 <textarea
                   rows={2}
                   value={matDesc}
                   onChange={(e) => setMatDesc(e.target.value)}
                   placeholder="Brief summary of the document contents..."
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-hidden focus:border-sky-500"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-hidden focus:border-sky-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-semibold text-slate-700">Material Document (PDF, PPTX, DOCX, ZIP)</label>
+                <label className="font-semibold text-slate-300">Material Document (PDF, PPTX, DOCX, ZIP)</label>
                 <input
                   ref={materialFileInputRef}
                   type="file"
                   onChange={handleMaterialFileChange}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100"
+                  className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-sky-300 hover:file:bg-slate-700"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowMaterialModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold hover:bg-slate-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all shadow-md shadow-sky-600/20"
+                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold transition-all shadow-md shadow-sky-600/20 cursor-pointer"
                 >
                   Publish Material
                 </button>
