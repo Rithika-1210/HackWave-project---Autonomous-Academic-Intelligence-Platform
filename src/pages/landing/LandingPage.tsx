@@ -236,37 +236,52 @@ export const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <h3 className="font-bold text-slate-900 text-sm">Administrator</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+            <div className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1.5 hover:border-sky-400 transition-all duration-300 ease-out cursor-pointer overflow-hidden space-y-2.5">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-gradient-to-r group-hover:from-sky-500 group-hover:to-indigo-500 transition-all duration-300" />
+              <h3 className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-sky-600 transition-colors">
+                Administrator
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">
                 Global governance over all departments, users, courses, classrooms, and system-wide audits.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <h3 className="font-bold text-slate-900 text-sm">Head of Department</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+            <div className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1.5 hover:border-sky-400 transition-all duration-300 ease-out cursor-pointer overflow-hidden space-y-2.5">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-gradient-to-r group-hover:from-sky-500 group-hover:to-indigo-500 transition-all duration-300" />
+              <h3 className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-sky-600 transition-colors">
+                Head of Department
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">
                 Departmental timetable approvals, faculty workload monitoring, and subject allocations.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <h3 className="font-bold text-slate-900 text-sm">Faculty Member</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+            <div className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1.5 hover:border-sky-400 transition-all duration-300 ease-out cursor-pointer overflow-hidden space-y-2.5">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-gradient-to-r group-hover:from-sky-500 group-hover:to-indigo-500 transition-all duration-300" />
+              <h3 className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-sky-600 transition-colors">
+                Faculty Member
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">
                 Personalized weekly timetable, assigned subjects, and teaching workload tracking.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <h3 className="font-bold text-slate-900 text-sm">Student</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+            <div className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1.5 hover:border-sky-400 transition-all duration-300 ease-out cursor-pointer overflow-hidden space-y-2.5">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-gradient-to-r group-hover:from-sky-500 group-hover:to-indigo-500 transition-all duration-300" />
+              <h3 className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-sky-600 transition-colors">
+                Student
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">
                 Semester class schedule, classroom locations, enrolled subjects, and exam dates.
               </p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <h3 className="font-bold text-slate-900 text-sm">Examination Cell</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+            <div className="group relative bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-xl hover:shadow-sky-500/10 hover:-translate-y-1.5 hover:border-sky-400 transition-all duration-300 ease-out cursor-pointer overflow-hidden space-y-2.5">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-transparent group-hover:bg-gradient-to-r group-hover:from-sky-500 group-hover:to-indigo-500 transition-all duration-300" />
+              <h3 className="font-bold text-slate-900 text-sm tracking-tight group-hover:text-sky-600 transition-colors">
+                Examination Cell
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-normal">
                 Exam scheduling, hall capacity management, and conflict-free seating coordination.
               </p>
             </div>
