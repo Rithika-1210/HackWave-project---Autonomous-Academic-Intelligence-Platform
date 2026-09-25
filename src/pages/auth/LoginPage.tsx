@@ -21,12 +21,12 @@ const DEFAULT_DEPARTMENTS: DeptOption[] = [
   { id: 4, name: 'Data Science & Artificial Intelligence', code: 'DSAI' },
 ];
 
-const ROLES: { value: UserRole; label: string; desc: string }[] = [
-  { value: 'admin', label: 'Administrator', desc: 'Institutional governance & system-wide administration' },
-  { value: 'hod', label: 'Head of Department', desc: 'Departmental timetable approvals & allocations' },
-  { value: 'faculty', label: 'Faculty Member', desc: 'Teaching schedules, assigned subjects & workload' },
-  { value: 'student', label: 'Student', desc: 'Class timetable, attendance & examination seating' },
-  { value: 'exam_cell', label: 'Examination Cell', desc: 'Exam schedules, hall capacities & seating plans' },
+const ROLES: { value: UserRole; label: string }[] = [
+  { value: 'admin', label: 'Administrator' },
+  { value: 'hod', label: 'Head of Department' },
+  { value: 'faculty', label: 'Faculty Member' },
+  { value: 'student', label: 'Student' },
+  { value: 'exam_cell', label: 'Examination Cell' },
 ];
 
 export const LoginPage: React.FC = () => {
@@ -209,7 +209,7 @@ export const LoginPage: React.FC = () => {
               }`}
             >
               <UserPlus className="w-4 h-4" />
-              <span>Sign Up (Add Member)</span>
+              <span>Sign Up</span>
             </button>
           </div>
 
@@ -297,7 +297,7 @@ export const LoginPage: React.FC = () => {
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 rounded-sm border-slate-800 bg-slate-950 text-sky-600 focus:ring-sky-500"
                   />
-                  <span>Keep session active (8 hours)</span>
+                  <span>Keep session active</span>
                 </label>
                 <span className="text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -395,7 +395,7 @@ export const LoginPage: React.FC = () => {
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value} className="bg-slate-900 text-white">
-                        {r.label} ({r.desc})
+                        {r.label}
                       </option>
                     ))}
                   </select>
@@ -418,7 +418,7 @@ export const LoginPage: React.FC = () => {
                   >
                     {departments.map((d) => (
                       <option key={d.id} value={d.id} className="bg-slate-900 text-white">
-                        {d.name} ({d.code})
+                        {d.name}
                       </option>
                     ))}
                   </select>
