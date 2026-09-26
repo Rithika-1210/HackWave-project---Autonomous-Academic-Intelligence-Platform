@@ -9,26 +9,37 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 export const AcademicCopilot: React.FC = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [messages, setMessages] = useState<CopilotMessage[]>([
-    {
-      id: 'welcome',
-      sender: 'copilot',
-      text: `Hello ${user?.full_name || 'Academic Leader'}! I am your **AAIP Academic Operations Copilot**.\n\nI am connected directly to your university's live database. How can I assist with your schedules, faculty workloads, or classroom allocations today?`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([
+  const isStudent = user?.role === 'student';
+
+  const defaultSuggestions = isStudent ? [
+    "When are my upcoming examinations?",
+    "What is my class timetable for Monday?",
+    "Show my internal assessment marks & attendance",
+    "What subjects am I currently enrolled in?",
+    "Who are my allocated instructors?",
+    "How do I choose or add a course elective?"
+  ] : [
     "Which department has the highest classroom utilization?",
     "What happens if two faculty members are unavailable tomorrow?",
     "Which classes are affected by the upcoming placement drive?",
     "Compare the current timetable with the simulated timetable.",
     "Which faculty members have workload imbalances?",
     "Summarize unresolved academic conflicts"
+  ];
+
+  const [messages, setMessages] = useState<CopilotMessage[]>([
+    {
+      id: 'welcome',
+      sender: 'copilot',
+      text: isStudent
+        ? `Hello ${user?.full_name || 'Student'}! 👋 I am your **AAIP Academic Operations Copilot**.\n\nI have direct access to your live **Semester 6** timetable, upcoming examinations, enrolled courses, attendance, and internal marks. How can I assist your studies today?`
+        : `Hello ${user?.full_name || 'Academic Leader'}! I am your **AAIP Academic Operations Copilot**.\n\nI am connected directly to your university's live database. How can I assist with your schedules, faculty workloads, or classroom allocations today?`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
   ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>(defaultSuggestions);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -195,7 +206,11 @@ export const AcademicCopilot: React.FC = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask Copilot about faculty workloads, room availability, conflicts, or schedules..."
+          placeholder={
+            isStudent
+              ? "Ask Copilot about your exams, timetable, marks, attendance, teachers, or courses..."
+              : "Ask Copilot about faculty workloads, room availability, conflicts, or schedules..."
+          }
           className="flex-1 bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-xs md:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
         />
         <button
