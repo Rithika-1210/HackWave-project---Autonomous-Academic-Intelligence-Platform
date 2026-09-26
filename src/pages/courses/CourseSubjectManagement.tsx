@@ -55,10 +55,18 @@ export const CourseSubjectManagement: React.FC = () => {
   const [sSubjectType, setSSubjectType] = useState<string>('Theory');
   const [sFacultyId, setSFacultyId] = useState<number | undefined>(undefined);
 
-  // Student Manual Enrollment Modal State
+  // Student Manual Enrollment Modal State & Add Course State
   const [enrollModalOpen, setEnrollModalOpen] = useState<boolean>(false);
+  const [enrollTab, setEnrollTab] = useState<'existing' | 'new_course'>('existing');
   const [selectedSubjectToEnroll, setSelectedSubjectToEnroll] = useState<number | undefined>(undefined);
   const [enrollSemester, setEnrollSemester] = useState<number>(6);
+
+  // New Course / Elective Form Fields
+  const [newSubName, setNewSubName] = useState<string>('');
+  const [newSubCode, setNewSubCode] = useState<string>('');
+  const [newSubType, setNewSubType] = useState<string>('Theory');
+  const [newSubPeriods, setNewSubPeriods] = useState<number>(4);
+  const [newSubFacultyId, setNewSubFacultyId] = useState<number | undefined>(undefined);
 
   const [modalError, setModalError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -155,6 +163,43 @@ export const CourseSubjectManagement: React.FC = () => {
       setTimeout(() => setSuccessMessage(null), 4000);
     } catch (err: any) {
       setModalError(err.response?.data?.detail || 'Failed to enroll in subject.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Student create new course/elective and auto-enroll handler
+  const handleCreateAndEnrollSubject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSubName.trim() || !newSubCode.trim()) {
+      setModalError('Please enter both course name and course code.');
+      return;
+    }
+    try {
+      setSubmitting(true);
+      setModalError(null);
+      const created = await subjectsApi.create({
+        name: newSubName.trim(),
+        code: newSubCode.trim().toUpperCase(),
+        department_id: studentDept?.id || user?.department_id || 9,
+        course_id: studentProfile?.course_id || courses[0]?.id || 1,
+        semester: enrollSemester,
+        weekly_periods: newSubPeriods,
+        subject_type: newSubType,
+        assigned_faculty_id: newSubFacultyId || null
+      });
+      await enrollmentsApi.enroll({
+        subject_id: created.id,
+        semester: enrollSemester
+      });
+      setSuccessMessage(`Course "${created.name}" (${created.code}) successfully added and enrolled!`);
+      setEnrollModalOpen(false);
+      setNewSubName('');
+      setNewSubCode('');
+      loadData();
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch (err: any) {
+      setModalError(err.response?.data?.detail || 'Failed to add and enroll course.');
     } finally {
       setSubmitting(false);
     }
@@ -301,6 +346,11 @@ export const CourseSubjectManagement: React.FC = () => {
   const studentSem = studentProfile?.semester || 6;
   const studentYear = Math.ceil(studentSem / 2);
 
+  // Instructors scoped to student's department
+  const departmentFaculty = (studentDept?.id || user?.department_id)
+    ? facultyMembers.filter(f => f.department_id === (studentDept?.id || user?.department_id))
+    : facultyMembers;
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       
@@ -315,13 +365,22 @@ export const CourseSubjectManagement: React.FC = () => {
         icon={BookOpen}
         actions={
           isStudent ? (
-            <button
-              onClick={() => { setModalError(null); setEnrollModalOpen(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs transition-all cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Choose / Enroll in Subject</span>
-            </button>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => { setModalError(null); setEnrollTab('existing'); setEnrollModalOpen(true); }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-xs transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Choose / Enroll in Subject</span>
+              </button>
+              <button
+                onClick={() => { setModalError(null); setEnrollTab('new_course'); setEnrollModalOpen(true); }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-800 font-semibold text-sm shadow-xs transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4 text-sky-600" />
+                <span>Add Course / Elective</span>
+              </button>
+            </div>
           ) : canManage && (
             <div className="flex items-center gap-3">
               <button
@@ -408,13 +467,22 @@ export const CourseSubjectManagement: React.FC = () => {
                 <h3 className="text-sm font-bold text-slate-900">Current Semester Enrolled Subjects & Continuous Evaluation</h3>
                 <p className="text-xs text-slate-500">Continuous Assessment (IA1, IA2), Assignment Scores, Attendance, and Hall Eligibility.</p>
               </div>
-              <button
-                onClick={() => { setModalError(null); setEnrollModalOpen(true); }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold transition-colors cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Enroll in Another Subject</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { setModalError(null); setEnrollTab('existing'); setEnrollModalOpen(true); }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Enroll in Subject</span>
+                </button>
+                <button
+                  onClick={() => { setModalError(null); setEnrollTab('new_course'); setEnrollModalOpen(true); }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Add Course / Elective</span>
+                </button>
+              </div>
             </div>
 
             {loading ? (
@@ -732,14 +800,40 @@ export const CourseSubjectManagement: React.FC = () => {
         </div>
       )}
 
-      {/* STUDENT MANUAL ENROLLMENT MODAL */}
+      {/* STUDENT MANUAL ENROLLMENT & COURSE ADDITION MODAL */}
       <Modal
         isOpen={enrollModalOpen}
         onClose={() => setEnrollModalOpen(false)}
-        title="Choose & Enroll in Curriculum Subject"
+        title={enrollTab === 'existing' ? 'Choose & Enroll in Curriculum Subject' : 'Add New Course / Elective Subject'}
         maxWidth="lg"
       >
-        <form onSubmit={handleEnrollSubject} className="space-y-4">
+        <div className="space-y-4">
+          {/* Dual Tab Mode Selector */}
+          <div className="flex border-b border-slate-200 pb-2 gap-2">
+            <button
+              type="button"
+              onClick={() => { setModalError(null); setEnrollTab('existing'); }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                enrollTab === 'existing'
+                  ? 'bg-sky-100 text-sky-800 border border-sky-200'
+                  : 'text-slate-600 hover:text-slate-900 bg-slate-50'
+              }`}
+            >
+              1. Choose from Curriculum
+            </button>
+            <button
+              type="button"
+              onClick={() => { setModalError(null); setEnrollTab('new_course'); }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                enrollTab === 'new_course'
+                  ? 'bg-sky-100 text-sky-800 border border-sky-200'
+                  : 'text-slate-600 hover:text-slate-900 bg-slate-50'
+              }`}
+            >
+              2. Add New Course / Elective
+            </button>
+          </div>
+
           {modalError && (
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
@@ -747,70 +841,184 @@ export const CourseSubjectManagement: React.FC = () => {
             </div>
           )}
 
-          <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900">
-            <span className="font-bold">Academic Department:</span> {studentDept?.name} ({studentDept?.code})
-            <span className="block mt-1 text-[11px] text-sky-700">
-              Select an elective or core course from your departmental syllabus to add to your semester study schedule.
-            </span>
-          </div>
+          {enrollTab === 'existing' ? (
+            <form onSubmit={handleEnrollSubject} className="space-y-4">
+              <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900">
+                <span className="font-bold">Academic Department:</span> {studentDept?.name} ({studentDept?.code})
+                <span className="block mt-1 text-[11px] text-sky-700">
+                  Select an elective or core course from your departmental syllabus to add to your semester study schedule.
+                </span>
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700">Enrollment Semester *</label>
-              <select
-                value={enrollSemester}
-                onChange={(e) => setEnrollSemester(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
-              >
-                {availableSemesters.map((s) => (
-                  <option key={s} value={s}>Year {Math.ceil(s / 2)} • Semester {s}</option>
-                ))}
-              </select>
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Enrollment Semester *</label>
+                  <select
+                    value={enrollSemester}
+                    onChange={(e) => setEnrollSemester(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                  >
+                    {availableSemesters.map((s) => (
+                      <option key={s} value={s}>Year {Math.ceil(s / 2)} • Semester {s}</option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700">Available Subject *</label>
-              <select
-                value={selectedSubjectToEnroll || ''}
-                onChange={(e) => setSelectedSubjectToEnroll(Number(e.target.value))}
-                required
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
-              >
-                <option value="">-- Choose Subject --</option>
-                {availableToEnroll
-                  .filter(s => s.semester === enrollSemester)
-                  .map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.code}: {s.name} ({s.subject_type})
-                    </option>
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Available Subject *</label>
+                  <select
+                    value={selectedSubjectToEnroll || ''}
+                    onChange={(e) => setSelectedSubjectToEnroll(Number(e.target.value))}
+                    required
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                  >
+                    <option value="">-- Choose Subject --</option>
+                    {availableToEnroll
+                      .filter(s => s.semester === enrollSemester)
+                      .map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.code}: {s.name} ({s.subject_type})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+
+              {availableToEnroll.filter(s => s.semester === enrollSemester).length === 0 && (
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 space-y-1">
+                  <p className="font-semibold">All standard subjects for Semester {enrollSemester} are already in your study schedule.</p>
+                  <p className="text-[11px] text-amber-700">
+                    Need an elective or custom course? Switch to the "Add New Course / Elective" tab above to register a new course!
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setEnrollModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold text-xs hover:bg-slate-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting || !selectedSubjectToEnroll}
+                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs disabled:opacity-50"
+                >
+                  {submitting ? 'Enrolling...' : 'Confirm Subject Enrollment'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleCreateAndEnrollSubject} className="space-y-4">
+              <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900">
+                <span className="font-bold">Add Course / Elective to Degree Curriculum:</span>
+                <span className="block mt-1 text-[11px] text-sky-700">
+                  Register a specialized course, open elective, or honors subject in {studentDept?.code || 'CT_UG'}. It will be added to your study schedule and immediately tracked for continuous evaluations.
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700">Course / Subject Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={newSubName}
+                  onChange={(e) => setNewSubName(e.target.value)}
+                  placeholder="e.g. Advanced Cloud Systems & Microservices"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Course Code *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newSubCode}
+                    onChange={(e) => setNewSubCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. CT309"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono uppercase"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Semester *</label>
+                  <select
+                    value={enrollSemester}
+                    onChange={(e) => setEnrollSemester(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                  >
+                    {availableSemesters.map((s) => (
+                      <option key={s} value={s}>Year {Math.ceil(s / 2)} • Semester {s}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Course Type</label>
+                  <select
+                    value={newSubType}
+                    onChange={(e) => setNewSubType(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                  >
+                    <option value="Theory">Theory Course</option>
+                    <option value="Practical">Practical / Laboratory</option>
+                    <option value="Elective">Departmental Elective</option>
+                    <option value="Project">Mini Project / Seminar</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-700">Weekly Lecture Hours</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={8}
+                    value={newSubPeriods}
+                    onChange={(e) => setNewSubPeriods(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-700">Assigned Department Instructor</label>
+                <select
+                  value={newSubFacultyId || ''}
+                  onChange={(e) => setNewSubFacultyId(e.target.value ? Number(e.target.value) : undefined)}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 font-medium"
+                >
+                  <option value="">-- Unassigned (Auto-Assign Later) --</option>
+                  {departmentFaculty.map((f) => (
+                    <option key={f.id} value={f.id}>{f.full_name} ({f.designation || 'Instructor'})</option>
                   ))}
-              </select>
-            </div>
-          </div>
+                </select>
+              </div>
 
-          {availableToEnroll.filter(s => s.semester === enrollSemester).length === 0 && (
-            <p className="text-xs text-amber-600 italic">
-              All subjects for Semester {enrollSemester} are already enrolled in your profile, or no additional subjects available.
-            </p>
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setEnrollModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold text-xs hover:bg-slate-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting || !newSubName.trim() || !newSubCode.trim()}
+                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs disabled:opacity-50"
+                >
+                  {submitting ? 'Adding & Enrolling...' : 'Add Course & Enroll'}
+                </button>
+              </div>
+            </form>
           )}
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => setEnrollModalOpen(false)}
-              className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold text-xs hover:bg-slate-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting || !selectedSubjectToEnroll}
-              className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs disabled:opacity-50"
-            >
-              {submitting ? 'Enrolling...' : 'Confirm Subject Enrollment'}
-            </button>
-          </div>
-        </form>
+        </div>
       </Modal>
 
       {/* ADMIN COURSE MODAL */}

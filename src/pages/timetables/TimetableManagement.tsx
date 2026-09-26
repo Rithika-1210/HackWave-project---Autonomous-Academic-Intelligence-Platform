@@ -11,11 +11,37 @@ import { TabNavigation } from '@/components/common/TabNavigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   CalendarDays, Plus, Filter, Trash2, Clock, MapPin,
-  UserCheck, AlertCircle, CheckCircle2, ChevronRight, Building2, User as UserIcon
+  UserCheck, AlertCircle, CheckCircle2, ChevronRight, Building2, User as UserIcon,
+  LayoutGrid, List, Coffee, Sparkles
 } from 'lucide-react';
 import { getDepartmentSemesters, getDepartmentYears, getSemestersForYear } from '@/utils/academicSemesters';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+interface PeriodSlot {
+  id: string;
+  name: string;
+  timeRange: string;
+  start: string;
+  end: string;
+  isBreak?: boolean;
+}
+
+const PERIOD_SLOTS: PeriodSlot[] = [
+  { id: 'p1', name: 'Period 1', timeRange: '09:00 - 10:00', start: '09:00', end: '10:00' },
+  { id: 'p2', name: 'Period 2', timeRange: '10:15 - 11:15', start: '10:15', end: '11:15' },
+  { id: 'p3', name: 'Period 3', timeRange: '11:30 - 12:30', start: '11:30', end: '12:30' },
+  { id: 'lunch', name: 'Lunch Break', timeRange: '12:30 - 13:30', start: '12:30', end: '13:30', isBreak: true },
+  { id: 'p4', name: 'Period 4 / Lab', timeRange: '13:30 - 14:30', start: '13:30', end: '14:30' },
+  { id: 'p5', name: 'Period 5 / Lab', timeRange: '14:30 - 15:30', start: '14:30', end: '15:30' },
+  { id: 'p6', name: 'Period 6', timeRange: '15:30 - 16:30', start: '15:30', end: '16:30' },
+];
+
+const timeToMinutes = (t: string): number => {
+  if (!t) return 0;
+  const parts = t.split(':');
+  return Number(parts[0]) * 60 + Number(parts[1] || 0);
+};
 
 export const TimetableManagement: React.FC = () => {
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
@@ -24,6 +50,9 @@ export const TimetableManagement: React.FC = () => {
   const [facultyMembers, setFacultyMembers] = useState<Faculty[]>([]);
   const [rooms, setRooms] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // View Mode: Student defaults to Grid format table
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Filters
   const [selectedDay, setSelectedDay] = useState<string>('All');
@@ -61,6 +90,30 @@ export const TimetableManagement: React.FC = () => {
   const activeDept = departments.find(d => d.id === activeDeptId);
   const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
   const availableYears = getDepartmentYears(activeDept?.code || activeDept?.name);
+
+  // Instructors filtered strictly to the active department (e.g. CT_UG instructors alone)
+  const departmentFaculty = activeDeptId
+    ? facultyMembers.filter(f => f.department_id === activeDeptId)
+    : facultyMembers;
+
+  // Helper to match an entry to a period slot
+  const getEntryForSlot = (day: string, slot: PeriodSlot): TimetableEntry | undefined => {
+    const slotStart = timeToMinutes(slot.start);
+    const slotEnd = timeToMinutes(slot.end);
+
+    return entries.find(e => {
+      if (e.day_of_week.toLowerCase() !== day.toLowerCase()) return false;
+      const eStart = timeToMinutes(e.start_time);
+      const eEnd = timeToMinutes(e.end_time);
+      return Math.max(eStart, slotStart) < Math.min(eEnd, slotEnd);
+    });
+  };
+
+  const isSlotContinuation = (entry: TimetableEntry, slot: PeriodSlot): boolean => {
+    const slotStart = timeToMinutes(slot.start);
+    const eStart = timeToMinutes(entry.start_time);
+    return eStart < slotStart;
+  };
 
   // Modal active dept & semester list
   const modalDept = departments.find(d => d.id === deptId);
@@ -270,17 +323,63 @@ export const TimetableManagement: React.FC = () => {
               onChange={(e) => setFacultyFilter(e.target.value)}
               className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
             >
-              <option value="">{user?.role === 'hod' ? 'All Department Instructors' : 'All Instructors'}</option>
-              {facultyMembers.map((f) => (
-                <option key={f.id} value={f.id}>{f.full_name}</option>
+              <option value="">{activeDept ? `All ${activeDept.code} Instructors (${departmentFaculty.length})` : 'All Instructors'}</option>
+              {departmentFaculty.map((f) => (
+                <option key={f.id} value={f.id}>{f.full_name} ({f.designation || 'Instructor'})</option>
               ))}
             </select>
           )}
         </div>
       </div>
 
-      {/* Timetable Entries Matrix View */}
+      {/* Timetable Header & View Switcher */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-slate-100 bg-slate-50/70">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span>Weekly Academic Timetable Grid</span>
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 font-semibold">
+                Semester {semFilter || 6} • {activeDept?.code || 'CT_UG'}
+              </span>
+            </h3>
+            <p className="text-xs text-slate-500">
+              {viewMode === 'grid'
+                ? 'Time-slot matrix view with course allocations, instructors, venues, and practical lab schedules.'
+                : 'Linear tabular schedule view with slot details and management.'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider hidden md:inline">Format:</span>
+            <div className="inline-flex p-1 rounded-xl bg-slate-200/80 border border-slate-300/60">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-white text-sky-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Weekly Grid View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'list'
+                    ? 'bg-white text-sky-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <List className="w-3.5 h-3.5" />
+                <span>List / Table View</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {loading ? (
           <div className="py-20 text-center">
             <div className="w-8 h-8 border-3 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -290,7 +389,168 @@ export const TimetableManagement: React.FC = () => {
           <div className="p-12 text-center text-slate-400 text-xs">
             No scheduled timetable slots found for the selected day or filters.
           </div>
+        ) : viewMode === 'grid' ? (
+          /* WEEKLY GRID MATRIX FORMAT */
+          <div className="overflow-x-auto p-4">
+            <table className="w-full border-collapse min-w-[900px]">
+              <thead>
+                <tr>
+                  <th className="w-28 p-3 text-left text-xs font-mono font-bold text-slate-700 bg-slate-100/90 rounded-tl-xl border border-slate-200 sticky left-0 z-10">
+                    DAY \ TIME
+                  </th>
+                  {PERIOD_SLOTS.map((slot) => (
+                    <th
+                      key={slot.id}
+                      className={`p-2.5 text-center text-xs border border-slate-200 ${
+                        slot.isBreak ? 'bg-amber-50/80 text-amber-900 w-24' : 'bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div className="font-bold">{slot.name}</div>
+                      <div className="text-[10px] font-mono font-medium text-slate-500">{slot.timeRange}</div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {(selectedDay === 'All' ? DAYS : [selectedDay]).map((day) => (
+                  <tr key={day} className="hover:bg-slate-50/40 transition-colors">
+                    {/* Sticky Day Column */}
+                    <td className="p-3 text-xs font-black text-slate-900 bg-slate-100/90 border border-slate-200 sticky left-0 z-10 whitespace-nowrap shadow-xs">
+                      <div className="flex items-center gap-1.5">
+                        <CalendarDays className="w-3.5 h-3.5 text-sky-600" />
+                        <span>{day}</span>
+                      </div>
+                    </td>
+
+                    {/* Period Cells */}
+                    {PERIOD_SLOTS.map((slot) => {
+                      if (slot.isBreak) {
+                        return (
+                          <td
+                            key={slot.id}
+                            className="p-2 border border-slate-200 bg-amber-50/40 text-center align-middle"
+                          >
+                            <div className="h-full min-h-[95px] flex flex-col items-center justify-center text-amber-700/80">
+                              <Coffee className="w-4 h-4 mb-1 text-amber-500" />
+                              <span className="text-[10px] font-bold uppercase tracking-wider">Lunch Break</span>
+                            </div>
+                          </td>
+                        );
+                      }
+
+                      const entry = getEntryForSlot(day, slot);
+
+                      if (!entry) {
+                        return (
+                          <td
+                            key={slot.id}
+                            className="p-2 border border-slate-200/80 align-top bg-slate-50/20"
+                          >
+                            <div className="h-full min-h-[95px] flex flex-col items-center justify-center p-2 rounded-xl border border-dashed border-slate-200 text-slate-300">
+                              <span className="text-xs font-mono">—</span>
+                              <span className="text-[10px] text-slate-400">Free Slot</span>
+                            </div>
+                          </td>
+                        );
+                      }
+
+                      const isContinuation = isSlotContinuation(entry, slot);
+                      const isLab = entry.subject_name.toLowerCase().includes('lab') || entry.subject_code.includes('P');
+
+                      if (isContinuation) {
+                        return (
+                          <td
+                            key={slot.id}
+                            className="p-2 border border-slate-200/80 align-top"
+                          >
+                            <div className="h-full min-h-[95px] flex flex-col justify-center items-center p-2 rounded-xl border border-dashed border-sky-300 bg-sky-50/40 text-center">
+                              <span className="text-[10px] font-mono font-bold text-sky-700 uppercase tracking-wider">
+                                ▲ Session Continues
+                              </span>
+                              <span className="text-xs font-bold text-slate-700 truncate max-w-[130px] mt-0.5">
+                                {entry.subject_name}
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-mono">
+                                ({entry.room_number})
+                              </span>
+                            </div>
+                          </td>
+                        );
+                      }
+
+                      return (
+                        <td
+                          key={slot.id}
+                          className="p-2 border border-slate-200/80 align-top"
+                        >
+                          <div
+                            className={`h-full min-h-[95px] flex flex-col justify-between p-2.5 rounded-xl border transition-all hover:shadow-md ${
+                              isLab
+                                ? 'bg-emerald-50/80 border-emerald-200 hover:border-emerald-300'
+                                : 'bg-white border-slate-200 hover:border-sky-300 shadow-xs'
+                            }`}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between gap-1 mb-1">
+                                <span
+                                  className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md ${
+                                    isLab
+                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                      : 'bg-sky-100 text-sky-800 border border-sky-200'
+                                  }`}
+                                >
+                                  {entry.subject_code}
+                                </span>
+                                <span className="text-[10px] font-mono text-slate-500 font-semibold">
+                                  {entry.start_time} - {entry.end_time}
+                                </span>
+                              </div>
+                              <h4
+                                className="font-bold text-xs text-slate-900 leading-snug line-clamp-2"
+                                title={entry.subject_name}
+                              >
+                                {entry.subject_name}
+                              </h4>
+                            </div>
+
+                            <div className="mt-2 pt-1.5 border-t border-slate-100 space-y-1">
+                              <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium truncate">
+                                <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                <span className="truncate font-semibold">{entry.faculty_name}</span>
+                              </div>
+                              <div className="flex items-center justify-between text-[11px]">
+                                <div className="flex items-center gap-1 text-purple-700 font-mono font-bold">
+                                  <MapPin className="w-3 h-3 text-purple-600 shrink-0" />
+                                  <span>{entry.room_number}</span>
+                                </div>
+                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-sm bg-slate-100 text-slate-600 font-semibold">
+                                  {entry.batch}
+                                </span>
+                              </div>
+                            </div>
+
+                            {canManage && (
+                              <div className="mt-1 pt-1 flex justify-end">
+                                <button
+                                  onClick={() => handleDelete(entry.id)}
+                                  className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                                  title="Remove Slot"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
+          /* DETAILED TABLE VIEW */
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-mono">
@@ -420,8 +680,8 @@ export const TimetableManagement: React.FC = () => {
                 onChange={(e) => setFacultyId(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                {facultyMembers.map((f) => (
-                  <option key={f.id} value={f.id}>{f.full_name} ({f.faculty_id})</option>
+                {(modalDept ? facultyMembers.filter(f => f.department_id === modalDept.id) : facultyMembers).map((f) => (
+                  <option key={f.id} value={f.id}>{f.full_name} ({f.designation || 'Instructor'})</option>
                 ))}
               </select>
             </div>

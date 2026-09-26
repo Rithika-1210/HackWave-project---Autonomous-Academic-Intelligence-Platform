@@ -60,10 +60,10 @@ def list_subjects(
 def create_subject(
     s_in: SubjectCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "hod"]))
+    current_user: User = Depends(require_roles(["admin", "hod", "faculty", "student"]))
 ):
-    if current_user.role == "hod" and current_user.department_id and s_in.department_id != current_user.department_id:
-        raise HTTPException(status_code=403, detail="HOD can only create subjects in their department")
+    if current_user.role in ["hod", "student", "faculty"] and current_user.department_id and s_in.department_id != current_user.department_id:
+        raise HTTPException(status_code=403, detail="Can only create courses/subjects in your assigned department")
     
     existing = db.query(Subject).filter(Subject.code == s_in.code.upper().strip()).first()
     if existing:
