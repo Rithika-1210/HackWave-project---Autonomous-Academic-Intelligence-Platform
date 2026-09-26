@@ -11,8 +11,9 @@ import { TabNavigation } from '@/components/common/TabNavigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   CalendarDays, Plus, Filter, Trash2, Clock, MapPin,
-  UserCheck, AlertCircle, CheckCircle2, ChevronRight
+  UserCheck, AlertCircle, CheckCircle2, ChevronRight, Building2, User as UserIcon
 } from 'lucide-react';
+import { getDepartmentSemesters } from '@/utils/academicSemesters';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -49,14 +50,32 @@ export const TimetableManagement: React.FC = () => {
   const { user } = useAuth();
   const canManage = user?.role === 'admin' || user?.role === 'hod';
 
+  // Dynamic academic semester rules:
+  // Engineering: strictly 8 semesters (1 to 8)
+  // Computing Tech UG (B.Sc): 6 semesters (1 to 6)
+  // Computing Tech PG (Integrated M.Sc): 10 semesters (1 to 10)
+  const activeDeptId = user?.role === 'admin'
+    ? (deptFilter ? Number(deptFilter) : undefined)
+    : (user?.department_id || undefined);
+  const activeDept = departments.find(d => d.id === activeDeptId);
+  const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
+
+  // Modal active dept & semester list
+  const modalDept = departments.find(d => d.id === deptId);
+  const modalSemesters = getDepartmentSemesters(modalDept?.code || modalDept?.name);
+
   const loadData = async () => {
     try {
       setLoading(true);
+      const queryDeptId = user?.role === 'admin'
+        ? (deptFilter ? Number(deptFilter) : undefined)
+        : (user?.department_id || undefined);
+      
       const [tData, dData, sData, fData, rData] = await Promise.all([
         timetablesApi.getEntries({
-          department_id: deptFilter ? Number(deptFilter) : undefined,
+          department_id: queryDeptId,
           semester: semFilter ? Number(semFilter) : undefined,
-          faculty_id: facultyFilter ? Number(facultyFilter) : undefined,
+          faculty_id: user?.role === 'faculty' ? undefined : (facultyFilter ? Number(facultyFilter) : undefined),
           day_of_week: selectedDay !== 'All' ? selectedDay : undefined,
         }),
         departmentsApi.getAll({ status_filter: 'Active' }),
@@ -70,7 +89,7 @@ export const TimetableManagement: React.FC = () => {
       setFacultyMembers(fData);
       setRooms(rData);
 
-      if (dData.length > 0 && !deptId) setDeptId(dData[0].id);
+      if (dData.length > 0 && !deptId) setDeptId(user?.department_id || dData[0].id);
       if (sData.length > 0 && !subjectId) setSubjectId(sData[0].id);
       if (fData.length > 0 && !facultyId) setFacultyId(fData[0].id);
       if (rData.length > 0 && !classroomId) setClassroomId(rData[0].id);
@@ -87,7 +106,7 @@ export const TimetableManagement: React.FC = () => {
 
   const openCreateModal = () => {
     setModalError(null);
-    setDeptId(departments[0]?.id || 1);
+    setDeptId(user?.department_id || departments[0]?.id || 1);
     setSemester(6);
     setBatch('Section A');
     setSubjectId(subjects[0]?.id || 1);
@@ -174,38 +193,64 @@ export const TimetableManagement: React.FC = () => {
 
         {/* Secondary Filter Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
-          <select
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
-            ))}
-          </select>
+          
+          {/* 1. Department Filter - Global only for Admin; Locked to assigned dept for other roles */}
+          {user?.role === 'admin' ? (
+            <select
+              value={deptFilter}
+              onChange={(e) => setDeptFilter(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
+            >
+              <option value="">All Departments</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+              ))}
+            </select>
+          ) : (
+            <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium flex items-center justify-between">
+              <div className="flex items-center gap-1.5 truncate">
+                <Building2 className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                <span className="truncate font-semibold text-slate-900">
+                  {activeDept ? `${activeDept.name} (${activeDept.code})` : 'Department'}
+                </span>
+              </div>
+              <span className="text-[10px] text-sky-700 font-semibold uppercase px-1.5 py-0.5 rounded-sm bg-sky-100">Assigned</span>
+            </div>
+          )}
 
+          {/* 2. Dynamic Semester Filter - Engineering has 8 sem, B.Sc has 6 sem, M.Sc has 10 sem */}
           <select
             value={semFilter}
             onChange={(e) => setSemFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
           >
-            <option value="">All Semesters</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+            <option value="">All Semesters (1 - {availableSemesters.length})</option>
+            {availableSemesters.map((s) => (
               <option key={s} value={s}>Semester {s}</option>
             ))}
           </select>
 
-          <select
-            value={facultyFilter}
-            onChange={(e) => setFacultyFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
-          >
-            <option value="">All Instructors</option>
-            {facultyMembers.map((f) => (
-              <option key={f.id} value={f.id}>{f.full_name}</option>
-            ))}
-          </select>
+          {/* 3. Instructor Filter - Faculty can only see themselves; HOD sees department faculty; Admin sees all */}
+          {user?.role === 'faculty' ? (
+            <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium flex items-center justify-between">
+              <div className="flex items-center gap-1.5 truncate">
+                <UserIcon className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                <span className="truncate font-semibold text-slate-900">{user.full_name}</span>
+              </div>
+              <span className="text-[10px] text-sky-700 font-semibold uppercase px-1.5 py-0.5 rounded-sm bg-sky-100">Personal</span>
+            </div>
+          ) : (
+            <select
+              value={facultyFilter}
+              onChange={(e) => setFacultyFilter(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
+            >
+              <option value="">{user?.role === 'hod' ? 'All Department Instructors' : 'All Instructors'}</option>
+              {facultyMembers.map((f) => (
+                <option key={f.id} value={f.id}>{f.full_name}</option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
@@ -321,7 +366,7 @@ export const TimetableManagement: React.FC = () => {
                 onChange={(e) => setSemester(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+                {modalSemesters.map((s) => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>

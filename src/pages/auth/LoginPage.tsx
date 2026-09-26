@@ -5,7 +5,8 @@ import { UserRole } from '@/types';
 import { authApi } from '@/services/api';
 import {
   Lock, Mail, Eye, EyeOff, ArrowRight,
-  AlertCircle, CheckCircle2, User as UserIcon, Building2, Shield, UserPlus, LogIn
+  AlertCircle, CheckCircle2, User as UserIcon, Building2, Shield, UserPlus, LogIn,
+  GraduationCap
 } from 'lucide-react';
 
 interface DeptOption {
@@ -43,6 +44,8 @@ export const LoginPage: React.FC = () => {
   const [signUpEmail, setSignUpEmail] = useState<string>('');
   const [signUpRole, setSignUpRole] = useState<UserRole>('faculty');
   const [signUpDeptId, setSignUpDeptId] = useState<number>(1);
+  const [academicTrack, setAcademicTrack] = useState<'engineering' | 'bsc_ct' | 'msc_ct'>('engineering');
+  const [signUpSemester, setSignUpSemester] = useState<number>(1);
   const [signUpPassword, setSignUpPassword] = useState<string>('');
   const [signUpConfirmPassword, setSignUpConfirmPassword] = useState<string>('');
   const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
@@ -132,18 +135,49 @@ export const LoginPage: React.FC = () => {
 
     try {
       setLoading(true);
+
+      let effectiveDeptId: number | null = signUpDeptId;
+      let courseCode: string | undefined = undefined;
+      const ctDept = departments.find(d => d.code === 'CT');
+
+      if (signUpRole !== 'admin') {
+        if (academicTrack === 'bsc_ct') {
+          effectiveDeptId = ctDept ? ctDept.id : signUpDeptId;
+          courseCode = 'CT_UG';
+        } else if (academicTrack === 'msc_ct') {
+          effectiveDeptId = ctDept ? ctDept.id : signUpDeptId;
+          courseCode = 'CT_PG';
+        } else {
+          // Engineering
+          const engDept = departments.find(d => d.id === signUpDeptId);
+          courseCode = engDept ? `BTECH-${engDept.code}` : undefined;
+        }
+      } else {
+        effectiveDeptId = null;
+      }
+
       const user = await register({
         full_name: signUpFullName.trim(),
         email: signUpEmail.trim(),
         role: signUpRole,
-        department_id: signUpRole === 'admin' ? null : signUpDeptId,
+        department_id: effectiveDeptId,
         password: signUpPassword,
+        semester: signUpSemester,
+        course_code: courseCode,
       });
 
-      setSuccessMsg('Account registered successfully! Launching your portal...');
-      setTimeout(() => {
-        routeByRole(user.role);
-      }, 700);
+      if (signUpRole === 'faculty') {
+        setSuccessMsg('Access Request Submitted! Your Department HOD will review and approve your credentials before login is enabled.');
+        setMode('signin');
+      } else if (signUpRole === 'hod') {
+        setSuccessMsg('Access Request Submitted! Institutional Administrator (Ram) will review and approve your HOD credentials before login is enabled.');
+        setMode('signin');
+      } else {
+        setSuccessMsg('Account registered successfully! Launching your portal...');
+        setTimeout(() => {
+          routeByRole(user.role);
+        }, 700);
+      }
     } catch (err: any) {
       const msg = err.response?.data?.detail || 'Registration failed. The email may already be registered.';
       setError(msg);
@@ -402,28 +436,141 @@ export const LoginPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Department Selection (Excluded for Overall Administrator) */}
-              {signUpRole !== 'admin' ? (
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-700">
-                    Assigned Department
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                      <Building2 className="w-4 h-4" />
-                    </div>
-                    <select
-                      value={signUpDeptId}
-                      onChange={(e) => setSignUpDeptId(Number(e.target.value))}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
-                    >
-                      {departments.map((d) => (
-                        <option key={d.id} value={d.id} className="bg-white text-slate-900">
-                          {d.name}
-                        </option>
-                      ))}
-                    </select>
+              {/* Approval Notice for Faculty & HOD */}
+              {signUpRole === 'faculty' && (
+                <div className="p-3 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+                  <Shield className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="leading-relaxed">
+                    <strong>HOD Authorization Required:</strong> Faculty account registrations require review & approval from your Department Head of Department (HOD) before portal login is enabled.
                   </div>
+                </div>
+              )}
+
+              {signUpRole === 'hod' && (
+                <div className="p-3 rounded-2xl bg-sky-50/80 border border-sky-200 text-xs text-sky-900 flex items-start gap-2.5">
+                  <Shield className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                  <div className="leading-relaxed">
+                    <strong>Admin Authorization Required:</strong> Head of Department (HOD) account registrations require institutional clearance from System Administrator (Ram) before portal login is enabled.
+                  </div>
+                </div>
+              )}
+
+              {/* Department & Academic Program Selection (Excluded for Overall Administrator) */}
+              {signUpRole !== 'admin' ? (
+                <div className="space-y-3 pt-1">
+                  
+                  {/* Academic Division Tabs */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
+                      <span>Academic Degree & Program Track</span>
+                      <span className="text-[10px] text-sky-600 font-mono font-semibold">Separate Duration & Sems</span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setAcademicTrack('engineering'); setSignUpSemester(1); }}
+                        className={`p-2 rounded-xl text-xs font-semibold text-center border transition-all cursor-pointer ${
+                          academicTrack === 'engineering'
+                            ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="font-bold">Engineering</div>
+                        <div className="text-[10px] opacity-80">4 Years • 8 Semesters</div>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => { setAcademicTrack('bsc_ct'); setSignUpSemester(1); }}
+                        className={`p-2 rounded-xl text-xs font-semibold text-center border transition-all cursor-pointer ${
+                          academicTrack === 'bsc_ct'
+                            ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="font-bold">B.Sc (CT_UG)</div>
+                        <div className="text-[10px] opacity-80">3 Years • 6 Semesters</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => { setAcademicTrack('msc_ct'); setSignUpSemester(1); }}
+                        className={`p-2 rounded-xl text-xs font-semibold text-center border transition-all cursor-pointer ${
+                          academicTrack === 'msc_ct'
+                            ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="font-bold">Integrated M.Sc (CT_PG)</div>
+                        <div className="text-[10px] opacity-80">5 Years • 10 Semesters</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Department Picker for Engineering, or Confirmation for CT */}
+                  {academicTrack === 'engineering' ? (
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-slate-700">
+                        Assigned Engineering Department
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Building2 className="w-4 h-4" />
+                        </div>
+                        <select
+                          value={signUpDeptId}
+                          onChange={(e) => setSignUpDeptId(Number(e.target.value))}
+                          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                        >
+                          {departments
+                            .filter(d => d.code !== 'CT')
+                            .map((d) => (
+                              <option key={d.id} value={d.id} className="bg-white text-slate-900">
+                                {d.name} ({d.code})
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-900 flex items-center gap-2.5">
+                      <Building2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <span className="leading-relaxed">
+                        <strong>Department:</strong> Computing Technologies (CT) &bull;{' '}
+                        {academicTrack === 'bsc_ct' ? 'B.Sc (CT_UG - 3 Years)' : 'Integrated M.Sc (CT_PG - 5 Years)'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Academic Semester Selection */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
+                      <span>Current Academic Semester</span>
+                      <span className="text-[10px] text-sky-700 font-mono font-semibold">
+                        {academicTrack === 'bsc_ct' ? 'Semesters 1 - 6' : academicTrack === 'msc_ct' ? 'Semesters 1 - 10' : 'Semesters 1 - 8'}
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <select
+                        value={signUpSemester}
+                        onChange={(e) => setSignUpSemester(Number(e.target.value))}
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:outline-hidden focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer font-medium"
+                      >
+                        {(academicTrack === 'bsc_ct'
+                          ? [1, 2, 3, 4, 5, 6]
+                          : academicTrack === 'msc_ct'
+                          ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                          : [1, 2, 3, 4, 5, 6, 7, 8]
+                        ).map((s) => (
+                          <option key={s} value={s}>Semester {s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
                 </div>
               ) : (
                 <div className="p-3 rounded-2xl bg-sky-50/70 border border-sky-200 text-xs text-sky-800 flex items-center gap-2.5">

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { aiApi, departmentsApi } from '@/services/api';
 import { Department, GeneratedTimetableEntry, GenerateScheduleResponse } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
+import { getDepartmentSemesters } from '@/utils/academicSemesters';
 import {
   Sparkles, Sliders, CheckCircle2, AlertTriangle, ArrowRight,
   Save, Send, RefreshCw, Clock, Building2, User, Layers, Calendar
 } from 'lucide-react';
 
 export const AiTimetableGenerator: React.FC = () => {
+  const { user } = useAuth();
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [selectedDept, setSelectedDept] = useState<number>(1);
-  const [semester, setSemester] = useState<number>(6);
+  const [selectedDept, setSelectedDept] = useState<number>(user?.department_id || 1);
+  const [semester, setSemester] = useState<number>(1);
   const [batch, setBatch] = useState<string>('Batch 2022-2026');
   const [academicYear, setAcademicYear] = useState<string>('2025-2026');
   
@@ -34,11 +37,19 @@ export const AiTimetableGenerator: React.FC = () => {
     try {
       const data = await departmentsApi.getAll({ status_filter: 'Active' });
       setDepartments(data);
-      if (data.length > 0) setSelectedDept(data[0].id);
+      if (data.length > 0) {
+        const defaultDept = user?.department_id && data.some(d => d.id === user.department_id)
+          ? user.department_id
+          : data[0].id;
+        setSelectedDept(defaultDept);
+      }
     } catch (err) {
       console.error(err);
     }
   };
+
+  const currentDept = departments.find(d => d.id === selectedDept);
+  const availableSemesters = getDepartmentSemesters(currentDept?.code || currentDept?.name);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -165,7 +176,8 @@ export const AiTimetableGenerator: React.FC = () => {
               <select
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(Number(e.target.value))}
-                className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                disabled={user?.role !== 'admin'}
+                className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-75"
               >
                 {departments.map(d => (
                   <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
@@ -183,7 +195,7 @@ export const AiTimetableGenerator: React.FC = () => {
                   onChange={(e) => setSemester(Number(e.target.value))}
                   className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => (
+                  {availableSemesters.map(s => (
                     <option key={s} value={s}>Semester {s}</option>
                   ))}
                 </select>

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { aiApi, departmentsApi } from '@/services/api';
 import { Department, ExamOptimizeResponse, ExamSlotProposal } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
+import { getDepartmentSemesters } from '@/utils/academicSemesters';
 import {
   FileCheck2, Sparkles, CheckCircle2, Clock, Building2, User,
   Calendar, RefreshCw, AlertTriangle
 } from 'lucide-react';
 
 export const ExamTimetableOptimizer: React.FC = () => {
+  const { user } = useAuth();
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [selectedDept, setSelectedDept] = useState<number>(1);
-  const [semester, setSemester] = useState<number>(6);
+  const [selectedDept, setSelectedDept] = useState<number>(user?.department_id || 1);
+  const [semester, setSemester] = useState<number>(1);
   const [startDate, setStartDate] = useState<string>('2026-11-10');
   const [endDate, setEndDate] = useState<string>('2026-11-25');
   const [loading, setLoading] = useState(false);
@@ -24,11 +27,19 @@ export const ExamTimetableOptimizer: React.FC = () => {
     try {
       const data = await departmentsApi.getAll({ status_filter: 'Active' });
       setDepartments(data);
-      if (data.length > 0) setSelectedDept(data[0].id);
+      if (data.length > 0) {
+        const defaultDept = user?.department_id && data.some(d => d.id === user.department_id) 
+          ? user.department_id 
+          : data[0].id;
+        setSelectedDept(defaultDept);
+      }
     } catch (err) {
       console.error(err);
     }
   };
+
+  const currentDept = departments.find(d => d.id === selectedDept);
+  const availableSemesters = getDepartmentSemesters(currentDept?.code || currentDept?.name);
 
   const handleOptimize = async () => {
     setLoading(true);
@@ -93,7 +104,8 @@ export const ExamTimetableOptimizer: React.FC = () => {
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(Number(e.target.value))}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none"
+              disabled={user?.role !== 'admin'}
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none disabled:opacity-75"
             >
               {departments.map(d => (
                 <option key={d.id} value={d.id}>{d.name}</option>
@@ -108,7 +120,7 @@ export const ExamTimetableOptimizer: React.FC = () => {
               onChange={(e) => setSemester(Number(e.target.value))}
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none"
             >
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => (
+              {availableSemesters.map(s => (
                 <option key={s} value={s}>Semester {s}</option>
               ))}
             </select>

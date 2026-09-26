@@ -14,11 +14,16 @@ def list_users(
     role: Optional[str] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin"]))
+    current_user: User = Depends(require_roles(["admin", "hod"]))
 ):
     query = db.query(User)
-    if role:
+    
+    # HOD can only see faculty in their own department
+    if current_user.role == "hod":
+        query = query.filter(User.department_id == current_user.department_id, User.role == "faculty")
+    elif role:
         query = query.filter(User.role == role)
+        
     if search:
         query = query.filter(
             (User.full_name.ilike(f"%{search}%")) | (User.email.ilike(f"%{search}%"))
@@ -103,3 +108,57 @@ def delete_user(
     db.commit()
     log_audit_action(db, current_user, "DELETE_USER", "User", f"Deleted user {email}")
     return {"message": f"User {email} successfully deleted"}
+
+@router.put("/{user_id}/approve", response_model=UserOut)
+def approve_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["admin", "hod"]))
+):
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # HOD can only approve faculty in their own department
+    if current_user.role == "hod":
+        if target_user.department_id != current_user.department_id or target_user.role != "faculty":
+            raise HTTPException(status_code=403, detail="HOD can only approve faculty within their assigned department")
+    
+    target_user.approval_status = "Approved"
+    target_user.is_active = True
+    
+    # Also activate associated faculty record if present
+    fac = db.query(Faculty).filter(Faculty.user_id == target_user.id).first()
+    if fac:
+        fac.status = "Active"
+        
+    db.commit()
+    db.refresh(target_user)
+    log_audit_action(db, current_user, "APPROVE_USER", "User", f"Approved access for {target_user.email} ({target_user.role})")
+    return target_user
+
+@router.put("/{user_id}/reject", response_model=UserOut)
+def reject_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["admin", "hod"]))
+):
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if current_user.role == "hod":
+        if target_user.department_id != current_user.department_id or target_user.role != "faculty":
+            raise HTTPException(status_code=403, detail="HOD can only reject faculty within their assigned department")
+    
+    target_user.approval_status = "Rejected"
+    target_user.is_active = False
+    
+    fac = db.query(Faculty).filter(Faculty.user_id == target_user.id).first()
+    if fac:
+        fac.status = "Inactive"
+        
+    db.commit()
+    db.refresh(target_user)
+    log_audit_action(db, current_user, "REJECT_USER", "User", f"Rejected access for {target_user.email} ({target_user.role})")
+    return target_user

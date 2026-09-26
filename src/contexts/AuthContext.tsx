@@ -14,6 +14,8 @@ interface AuthContextType {
     full_name: string;
     role: UserRole;
     department_id?: number | null;
+    semester?: number;
+    course_code?: string;
   }) => Promise<User>;
   updateUser: (updated: User) => void;
   logout: () => void;
@@ -74,12 +76,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     full_name: string;
     role: UserRole;
     department_id?: number | null;
+    semester?: number;
+    course_code?: string;
   }): Promise<User> => {
     const data = await authApi.register(userData);
-    localStorage.setItem('aaip_token', data.access_token);
-    localStorage.setItem('aaip_user', JSON.stringify(data.user));
-    setToken(data.access_token);
-    setUser(data.user);
+    if (data.access_token) {
+      localStorage.setItem('aaip_token', data.access_token);
+      localStorage.setItem('aaip_user', JSON.stringify(data.user));
+      setToken(data.access_token);
+      setUser(data.user);
+    }
     return data.user;
   };
 

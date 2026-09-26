@@ -42,13 +42,25 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
     else:
         dept_id = user_in.department_id
 
+    # Set approval status based on role:
+    # Faculty requires HOD approval
+    # HOD requires Admin approval
+    # Students, Admin, and Exam Cell are approved
+    if user_in.role == "faculty":
+        user_approval = "Pending"
+    elif user_in.role == "hod":
+        user_approval = "Pending"
+    else:
+        user_approval = "Approved"
+
     new_user = User(
         email=email_clean,
         hashed_password=get_password_hash(user_in.password),
         full_name=user_in.full_name.strip(),
         role=user_in.role,
         department_id=dept_id,
-        is_active=True
+        is_active=True,
+        approval_status=user_approval
     )
     db.add(new_user)
     db.commit()
@@ -69,7 +81,8 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
                 email=new_user.email,
                 department_id=dept_id,
                 designation=designation,
-                max_weekly_workload=18
+                max_weekly_workload=18,
+                status="Pending" if user_approval == "Pending" else "Active"
             )
             db.add(new_faculty)
             db.commit()
@@ -78,14 +91,26 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
         existing_student = db.query(Student).filter(Student.email == email_clean).first()
         if not existing_student:
             student_count = db.query(Student).count() + 1
+            
+            # Resolve course if course_code provided
+            resolved_course_id = None
+            from app.models.models import Course
+            if user_in.course_code:
+                c_obj = db.query(Course).filter(Course.code == user_in.course_code).first()
+                if c_obj:
+                    resolved_course_id = c_obj.id
+            
+            stu_sem = user_in.semester if user_in.semester and 1 <= user_in.semester <= 10 else 1
             new_student = Student(
                 user_id=new_user.id,
                 student_id=f"STU-{dept_code}-{student_count:03d}",
                 full_name=new_user.full_name,
                 email=new_user.email,
                 department_id=dept_id,
-                semester=1,
-                batch="Batch 2026-2030"
+                course_id=resolved_course_id,
+                semester=stu_sem,
+                batch="Batch 2026-2030",
+                status="Active"
             )
             db.add(new_student)
             db.commit()
@@ -99,12 +124,12 @@ def register(user_in: UserCreate, request: Request, db: Session = Depends(get_db
 
     log_audit_action(
         db, new_user, "REGISTER_USER", "User",
-        f"New institutional user registered: {new_user.email} with role {new_user.role}",
+        f"New institutional user registered: {new_user.email} with role {new_user.role} (Status: {user_approval})",
         request.client.host if request.client else None
     )
 
     return TokenResponse(
-        access_token=token,
+        access_token=token if user_approval == "Approved" else "",
         token_type="bearer",
         user=UserOut.model_validate(new_user)
     )
@@ -145,6 +170,31 @@ def login(login_data: LoginRequest, request: Request, db: Session = Depends(get_
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Institutional account has been suspended or deactivated"
+        )
+    
+    # Check approval status
+    if getattr(user, "approval_status", "Approved") == "Pending":
+        if user.role == "faculty":
+            dept_title = user.department.name if user.department else "your department"
+            hod_name = user.department.hod_name if user.department and user.department.hod_name else "Department HOD"
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access Pending: Faculty accounts require approval from your Department HOD ({hod_name} - {dept_title}) before portal access is activated."
+            )
+        elif user.role == "hod":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access Pending: Head of Department (HOD) accounts require approval from Institutional Administrator (Ram) before portal access is activated."
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access Pending: Your account is currently awaiting administrative approval."
+            )
+    elif getattr(user, "approval_status", "Approved") == "Rejected":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied: Your account request was declined by institutional administration."
         )
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

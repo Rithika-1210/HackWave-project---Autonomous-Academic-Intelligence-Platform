@@ -20,8 +20,15 @@ def list_faculty(
 ):
     query = db.query(Faculty)
     
-    # HOD department-level scoping
-    if current_user.role == "hod" and current_user.department_id:
+    # Role Scoping
+    if current_user.role == "faculty":
+        # One faculty should NOT see other faculty members
+        query = query.filter((Faculty.user_id == current_user.id) | (Faculty.email == current_user.email))
+    elif current_user.role == "hod" and current_user.department_id:
+        # HOD only sees faculty in their department
+        query = query.filter(Faculty.department_id == current_user.department_id)
+    elif current_user.role == "student" and current_user.department_id:
+        # Student only sees faculty in their department
         query = query.filter(Faculty.department_id == current_user.department_id)
     elif department_id:
         query = query.filter(Faculty.department_id == department_id)

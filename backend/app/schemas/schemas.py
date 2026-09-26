@@ -20,9 +20,12 @@ class UserBase(BaseModel):
     role: str  # admin, hod, faculty, student, exam_cell
     department_id: Optional[int] = None
     is_active: bool = True
+    approval_status: Optional[str] = "Approved"
 
 class UserCreate(UserBase):
     password: str
+    semester: Optional[int] = None
+    course_code: Optional[str] = None
 
 class UserUpdate(BaseModel):
     email: Optional[str] = None
@@ -30,6 +33,7 @@ class UserUpdate(BaseModel):
     role: Optional[str] = None
     department_id: Optional[int] = None
     is_active: Optional[bool] = None
+    approval_status: Optional[str] = None
     password: Optional[str] = None
 
 class UserOut(UserBase):

@@ -22,6 +22,7 @@ class User(Base):
     role = Column(String(50), nullable=False, index=True)  # admin, hod, faculty, student, exam_cell
     department_id = Column(Integer, ForeignKey("departments.id", ondelete="SET NULL"), nullable=True)
     is_active = Column(Boolean, default=True)
+    approval_status = Column(String(50), default="Approved")  # Approved, Pending, Rejected
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

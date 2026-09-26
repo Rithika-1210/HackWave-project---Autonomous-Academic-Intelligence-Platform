@@ -19,17 +19,11 @@ def list_subjects(
 ):
     query = db.query(Subject)
     
-    # HOD department scoping
-    if current_user.role == "hod" and current_user.department_id:
+    # Department scoping for non-admin users
+    if current_user.role in ["hod", "faculty", "student"] and current_user.department_id:
         query = query.filter(Subject.department_id == current_user.department_id)
     elif department_id:
         query = query.filter(Subject.department_id == department_id)
-    
-    # Faculty scoping: view subjects assigned to them or within dept
-    if current_user.role == "faculty":
-        # faculty can view either their assigned subjects or all dept subjects
-        if current_user.department_id:
-            query = query.filter(Subject.department_id == current_user.department_id)
 
     if course_id:
         query = query.filter(Subject.course_id == course_id)

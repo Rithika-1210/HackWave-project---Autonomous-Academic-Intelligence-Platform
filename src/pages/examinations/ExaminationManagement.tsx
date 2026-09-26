@@ -12,6 +12,7 @@ import {
   FileCheck2, Plus, Search, Filter, Edit, Trash2, CalendarDays,
   Clock, MapPin, AlertCircle, CheckCircle2
 } from 'lucide-react';
+import { getDepartmentSemesters } from '@/utils/academicSemesters';
 
 export const ExaminationManagement: React.FC = () => {
   const [exams, setExams] = useState<Examination[]>([]);
@@ -45,6 +46,12 @@ export const ExaminationManagement: React.FC = () => {
 
   const { user } = useAuth();
   const canManage = user?.role === 'admin' || user?.role === 'exam_cell';
+
+  const activeDept = departments.find(d => d.id === (deptFilter ? Number(deptFilter) : (user?.department_id || undefined)));
+  const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
+
+  const modalDept = departments.find(d => d.id === deptId);
+  const modalSemesters = getDepartmentSemesters(modalDept?.code || modalDept?.name);
 
   const loadData = async () => {
     try {
@@ -199,24 +206,30 @@ export const ExaminationManagement: React.FC = () => {
         </form>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <select
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
-            ))}
-          </select>
+          {user?.role === 'admin' || user?.role === 'exam_cell' ? (
+            <select
+              value={deptFilter}
+              onChange={(e) => setDeptFilter(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
+            >
+              <option value="">All Departments</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+              ))}
+            </select>
+          ) : (
+            <span className="px-3 py-2 rounded-xl bg-purple-50 border border-purple-200 text-purple-800 text-xs font-bold">
+              {activeDept?.code || 'Department'}
+            </span>
+          )}
 
           <select
             value={semFilter}
             onChange={(e) => setSemFilter(e.target.value)}
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
           >
-            <option value="">All Semesters</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+            <option value="">All Semesters (1 - {availableSemesters.length})</option>
+            {availableSemesters.map((s) => (
               <option key={s} value={s}>Semester {s}</option>
             ))}
           </select>
@@ -351,7 +364,8 @@ export const ExaminationManagement: React.FC = () => {
               <select
                 value={deptId}
                 onChange={(e) => setDeptId(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
+                disabled={user?.role !== 'admin' && user?.role !== 'exam_cell'}
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 disabled:opacity-75"
               >
                 {departments.map((d) => (
                   <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
@@ -380,7 +394,7 @@ export const ExaminationManagement: React.FC = () => {
                 onChange={(e) => setSemester(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+                {modalSemesters.map((s) => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>

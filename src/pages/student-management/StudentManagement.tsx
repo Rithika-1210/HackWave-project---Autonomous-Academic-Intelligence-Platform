@@ -8,6 +8,7 @@ import {
   GraduationCap, Plus, Search, Filter, Edit, Trash2, Mail, Phone,
   AlertCircle, CheckCircle2
 } from 'lucide-react';
+import { getDepartmentSemesters } from '@/utils/academicSemesters';
 
 export const StudentManagement: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -39,6 +40,12 @@ export const StudentManagement: React.FC = () => {
 
   const { user } = useAuth();
   const canManage = user?.role === 'admin' || user?.role === 'hod';
+
+  const activeDept = departments.find(d => d.id === (deptFilter ? Number(deptFilter) : (user?.department_id || undefined)));
+  const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
+
+  const modalDept = departments.find(d => d.id === deptId);
+  const modalSemesters = getDepartmentSemesters(modalDept?.code || modalDept?.name);
 
   const loadData = async () => {
     try {
@@ -208,24 +215,30 @@ export const StudentManagement: React.FC = () => {
         </form>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <select
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-hidden focus:border-sky-500 font-medium"
-          >
-            <option value="">All Departments</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
-            ))}
-          </select>
+          {user?.role === 'admin' ? (
+            <select
+              value={deptFilter}
+              onChange={(e) => setDeptFilter(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-hidden focus:border-sky-500 font-medium"
+            >
+              <option value="">All Departments</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+              ))}
+            </select>
+          ) : (
+            <span className="px-3 py-2 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs font-bold">
+              {activeDept?.code || 'Department'}
+            </span>
+          )}
 
           <select
             value={semFilter}
             onChange={(e) => setSemFilter(e.target.value)}
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 focus:outline-hidden focus:border-sky-500 font-medium"
           >
-            <option value="">All Semesters</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((sem) => (
+            <option value="">All Semesters (1 - {availableSemesters.length})</option>
+            {availableSemesters.map((sem) => (
               <option key={sem} value={sem}>Semester {sem}</option>
             ))}
           </select>
@@ -354,7 +367,8 @@ export const StudentManagement: React.FC = () => {
               <select
                 value={deptId}
                 onChange={(e) => setDeptId(Number(e.target.value))}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
+                disabled={user?.role !== 'admin'}
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 disabled:opacity-75"
               >
                 {departments.map((d) => (
                   <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
@@ -419,7 +433,7 @@ export const StudentManagement: React.FC = () => {
                 onChange={(e) => setSemester(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
+                {modalSemesters.map((s) => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>

@@ -24,6 +24,10 @@ def list_departments(
             (Department.name.ilike(f"%{search}%")) | (Department.code.ilike(f"%{search}%"))
         )
     
+    # All roles except admin and exam_cell are strictly scoped to their own assigned department
+    if current_user.role in ["faculty", "hod", "student"] and current_user.department_id:
+        query = query.filter(Department.id == current_user.department_id)
+    
     departments = query.order_by(Department.name.asc()).all()
     
     # Enrich with counts

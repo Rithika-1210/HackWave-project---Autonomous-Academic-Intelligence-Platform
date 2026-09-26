@@ -98,6 +98,8 @@ export const authApi = {
     full_name: string;
     role: UserRole;
     department_id?: number | null;
+    semester?: number;
+    course_code?: string;
   }) => {
     const res = await api.post<{ access_token: string; token_type: string; user: User }>('/auth/register', userData);
     clearApiCache();
@@ -565,6 +567,37 @@ export const aiApi = {
   },
   rollbackChange: async (changeId: string, reason?: string) => {
     const res = await api.post('/ai/changes/rollback', { change_id: changeId, reason });
+    return res.data;
+  }
+};
+
+export const usersApi = {
+  getAll: async (params?: { role?: string; search?: string }) => {
+    return cachedGet<User[]>('/users', { params });
+  },
+  create: async (userData: any) => {
+    const res = await api.post<User>('/users', userData);
+    clearApiCache('users');
+    return res.data;
+  },
+  update: async (userId: number, userData: any) => {
+    const res = await api.put<User>(`/users/${userId}`, userData);
+    clearApiCache('users');
+    return res.data;
+  },
+  delete: async (userId: number) => {
+    const res = await api.delete(`/users/${userId}`);
+    clearApiCache('users');
+    return res.data;
+  },
+  approve: async (userId: number) => {
+    const res = await api.put<User>(`/users/${userId}/approve`);
+    clearApiCache('users');
+    return res.data;
+  },
+  reject: async (userId: number) => {
+    const res = await api.put<User>(`/users/${userId}/reject`);
+    clearApiCache('users');
     return res.data;
   }
 };

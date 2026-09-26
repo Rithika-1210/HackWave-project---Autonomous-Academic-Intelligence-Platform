@@ -28,17 +28,19 @@ def list_timetable_entries(
     query = db.query(TimetableEntry)
     
     # Role Scoping
-    if current_user.role == "hod" and current_user.department_id:
-        query = query.filter(TimetableEntry.department_id == current_user.department_id)
-    elif current_user.role == "faculty":
-        # Check if user has linked faculty profile
+    if current_user.role == "faculty":
+        # One faculty should NOT see other faculty schedules
         faculty = db.query(Faculty).filter(
             (Faculty.user_id == current_user.id) | (Faculty.email == current_user.email)
         ).first()
         if faculty:
-            # Default to personal faculty timetable unless explicitly requesting department
-            if not department_id:
-                query = query.filter(TimetableEntry.faculty_id == faculty.id)
+            query = query.filter(TimetableEntry.faculty_id == faculty.id)
+        if current_user.department_id:
+            query = query.filter(TimetableEntry.department_id == current_user.department_id)
+    elif current_user.role == "hod" and current_user.department_id:
+        query = query.filter(TimetableEntry.department_id == current_user.department_id)
+        if faculty_id:
+            query = query.filter(TimetableEntry.faculty_id == faculty_id)
     elif current_user.role == "student":
         student = db.query(Student).filter(
             (Student.user_id == current_user.id) | (Student.email == current_user.email)
@@ -48,17 +50,21 @@ def list_timetable_entries(
                 TimetableEntry.department_id == student.department_id,
                 TimetableEntry.semester == student.semester
             )
+        elif current_user.department_id:
+            query = query.filter(TimetableEntry.department_id == current_user.department_id)
+    else:
+        # Admin or role with global oversight
+        if department_id:
+            query = query.filter(TimetableEntry.department_id == department_id)
+        if faculty_id:
+            query = query.filter(TimetableEntry.faculty_id == faculty_id)
     
-    if department_id:
-        query = query.filter(TimetableEntry.department_id == department_id)
     if course_id:
         query = query.filter(TimetableEntry.course_id == course_id)
     if semester:
         query = query.filter(TimetableEntry.semester == semester)
     if batch and batch != "All":
         query = query.filter(or_(TimetableEntry.batch == batch, TimetableEntry.batch == "All"))
-    if faculty_id:
-        query = query.filter(TimetableEntry.faculty_id == faculty_id)
     if classroom_id:
         query = query.filter(TimetableEntry.classroom_id == classroom_id)
     if day_of_week:

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { dashboardApi } from '@/services/api';
-import { HodStats } from '@/types';
+import { dashboardApi, usersApi } from '@/services/api';
+import { HodStats, User } from '@/types';
 import { StatCard } from '@/components/common/StatCard';
 import {
   Users, GraduationCap, BookOpen, Clock, Activity,
-  PieChart as PieIcon, CheckCircle2, ShieldAlert
+  PieChart as PieIcon, CheckCircle2, ShieldAlert, Shield, XCircle, AlertCircle
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -13,21 +13,46 @@ import {
 
 export const HodDashboard: React.FC = () => {
   const [stats, setStats] = useState<HodStats | null>(null);
+  const [facultyUsers, setFacultyUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const fetchHod = async () => {
+    try {
+      const [data, fUsers] = await Promise.all([
+        dashboardApi.getHod(),
+        usersApi.getAll({ role: 'faculty' }).catch(() => [] as User[])
+      ]);
+      setStats(data);
+      setFacultyUsers(fUsers);
+    } catch (err) {
+      console.error("Failed to load HOD stats", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchHod = async () => {
-      try {
-        const data = await dashboardApi.getHod();
-        setStats(data);
-      } catch (err) {
-        console.error("Failed to load HOD stats", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchHod();
   }, []);
+
+  const handleApproveFaculty = async (u: User) => {
+    try {
+      await usersApi.approve(u.id);
+      fetchHod();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Error authorizing faculty access');
+    }
+  };
+
+  const handleRejectFaculty = async (u: User) => {
+    if (!window.confirm(`Decline access for ${u.full_name}?`)) return;
+    try {
+      await usersApi.reject(u.id);
+      fetchHod();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Error declining faculty access');
+    }
+  };
 
   if (loading) {
     return (
@@ -38,6 +63,8 @@ export const HodDashboard: React.FC = () => {
   }
 
   if (!stats) return null;
+
+  const pendingFaculty = facultyUsers.filter(u => u.approval_status === 'Pending');
 
   const PIE_COLORS = ['#0ea5e9', '#6366f1', '#10b981'];
 
@@ -65,6 +92,76 @@ export const HodDashboard: React.FC = () => {
             <span>Optimal Workloads</span>
           </div>
         </div>
+      </div>
+
+      {/* Faculty Access Clearance & Approvals Section */}
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900">
+                Department Faculty Access & Clearance
+              </h2>
+              {pendingFaculty.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold border border-amber-300 animate-pulse">
+                  {pendingFaculty.length} Pending Approval
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Review and authorize access requests for faculty registered under {stats.department_name}.
+            </p>
+          </div>
+          <div className="text-xs text-slate-500 font-mono">
+            {facultyUsers.length} total departmental instructors
+          </div>
+        </div>
+
+        {/* Pending Requests Highlight */}
+        {pendingFaculty.length > 0 ? (
+          <div className="space-y-2.5">
+            {pendingFaculty.map((f) => (
+              <div
+                key={f.id}
+                className="p-4 rounded-xl bg-amber-50/80 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold text-sm">
+                    {f.full_name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-bold text-slate-900 text-sm">{f.full_name}</div>
+                    <div className="text-xs text-slate-500 font-mono">{f.email}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleApproveFaculty(f)}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Authorize Access</span>
+                  </button>
+                  <button
+                    onClick={() => handleRejectFaculty(f)}
+                    className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    <span>Decline</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>All registered faculty members in {stats.department_code} are cleared and active.</span>
+            </span>
+            <span className="text-[11px] font-mono text-slate-400">Zero pending authorizations</span>
+          </div>
+        )}
       </div>
 
       {/* KPI Stats */}

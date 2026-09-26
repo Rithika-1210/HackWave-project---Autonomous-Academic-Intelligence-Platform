@@ -7,6 +7,7 @@ export interface User {
   role: UserRole;
   department_id?: number | null;
   is_active: boolean;
+  approval_status?: 'Approved' | 'Pending' | 'Rejected';
   created_at: string;
   phone?: string;
   designation?: string;
