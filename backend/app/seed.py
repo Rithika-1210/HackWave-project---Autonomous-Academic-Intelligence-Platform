@@ -38,18 +38,18 @@ def seed_database():
         print("Seeding Departments...")
         depts_data = [
             ("Computer Science & Engineering", "CSE", "Kaviya", "Leading department in computing, algorithms, software engineering, and systems."),
-            ("Information Technology", "IT", "Dr. Dennis Ritchie", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
-            ("Electronics & Communication Engineering", "ECE", "Dr. Claude Shannon", "Focusing on signal processing, embedded systems, telecommunications, and VLSI."),
-            ("Electrical & Electronics Engineering", "EEE", "Dr. Nikola Tesla", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
-            ("Mechanical Engineering", "MECH", "Dr. Robert Goddard", "Core engineering in thermodynamics, structural robotics, CAD/CAM, and design."),
-            ("Civil Engineering", "CIVIL", "Dr. Arthur Casagrande", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
-            ("Data Science & Artificial Intelligence", "DSAI", "Dr. Ada Lovelace", "Specialized division in deep learning, autonomous systems, and predictive modeling."),
-            ("Artificial Intelligence & Machine Learning", "AIML", "Dr. Geoffrey Hinton", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
-            ("Computing Technologies", "CT", "Dr. Grace Hopper", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
-            ("Biomedical Engineering", "BME", "Dr. Willem Kolff", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
-            ("Chemical Engineering", "CHEM", "Dr. George Davis", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
-            ("Mechatronics Engineering", "MCT", "Dr. Tetsuro Mori", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
-            ("Aerospace Engineering", "AERO", "Dr. Theodore von Karman", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
+            ("Information Technology", "IT", "Suresh", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
+            ("Electronics & Communication Engineering", "ECE", "Anitha", "Focusing on signal processing, embedded systems, telecommunications, and VLSI."),
+            ("Electrical & Electronics Engineering", "EEE", "Rajesh", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
+            ("Mechanical Engineering", "MECH", "Vijay", "Core engineering in thermodynamics, structural robotics, CAD/CAM, and design."),
+            ("Civil Engineering", "CIVIL", "Priya", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
+            ("Data Science & Artificial Intelligence", "DSAI", "Sneha", "Specialized division in deep learning, autonomous systems, and predictive modeling."),
+            ("Artificial Intelligence & Machine Learning", "AIML", "Manoj", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
+            ("Computing Technologies", "CT", "Divya", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
+            ("Biomedical Engineering", "BME", "Rahul", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
+            ("Chemical Engineering", "CHEM", "Deepa", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
+            ("Mechatronics Engineering", "MCT", "Arun", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
+            ("Aerospace Engineering", "AERO", "Sanjay", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
         ]
         dept_map = {}
         for name, code, hod, desc in depts_data:
@@ -183,10 +183,10 @@ def seed_database():
         faculty_records = [
             (hod_user.id, "FAC-CSE-001", "Kaviya", "hod.cse@aaip.edu", "+91 98765 43210", dept_map["CSE"].id, "Professor & HOD", "Distributed Systems & Fault Tolerance", 16),
             (faculty_user.id, "FAC-CSE-002", "Sham", "dr.elena@aaip.edu", "+91 98765 43211", dept_map["CSE"].id, "Associate Professor", "Artificial Intelligence & Heuristics", 18),
-            (None, "FAC-CSE-003", "Dr. Linus Torvalds", "linus.t@aaip.edu", "+91 98765 43212", dept_map["CSE"].id, "Professor", "Kernel Architecture & Systems Programming", 14),
-            (None, "FAC-ECE-001", "Dr. Claude Shannon", "shannon.c@aaip.edu", "+91 98765 43213", dept_map["ECE"].id, "Professor & HOD", "Information Theory & Digital Comms", 16),
-            (None, "FAC-DSAI-001", "Dr. Ada Lovelace", "ada.l@aaip.edu", "+91 98765 43214", dept_map["DSAI"].id, "Associate Professor", "Analytical Engine Algorithms", 18),
-            (None, "FAC-MECH-001", "Dr. Robert Goddard", "goddard.r@aaip.edu", "+91 98765 43215", dept_map["MECH"].id, "Professor & HOD", "Propulsion & Thermodynamics", 16)
+            (None, "FAC-CSE-003", "Suresh", "linus.t@aaip.edu", "+91 98765 43212", dept_map["CSE"].id, "Professor", "Kernel Architecture & Systems Programming", 14),
+            (None, "FAC-ECE-001", "Anitha", "shannon.c@aaip.edu", "+91 98765 43213", dept_map["ECE"].id, "Professor & HOD", "Information Theory & Digital Comms", 16),
+            (None, "FAC-DSAI-001", "Sneha", "ada.l@aaip.edu", "+91 98765 43214", dept_map["DSAI"].id, "Associate Professor", "Analytical Engine Algorithms", 18),
+            (None, "FAC-MECH-001", "Vijay", "goddard.r@aaip.edu", "+91 98765 43215", dept_map["MECH"].id, "Professor & HOD", "Propulsion & Thermodynamics", 16)
         ]
         faculty_map = {}
         for uid, fid, name, email, phone, dept_id, desig, spec, max_w in faculty_records:

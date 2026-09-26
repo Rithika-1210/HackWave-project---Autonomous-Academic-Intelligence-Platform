@@ -65,19 +65,34 @@ try:
             # Ensure all engineering departments and CT programs exist
             from app.models.models import Department, Course
             extra_depts = [
-                ("Information Technology", "IT", "Dr. Dennis Ritchie", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
-                ("Electrical & Electronics Engineering", "EEE", "Dr. Nikola Tesla", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
-                ("Civil Engineering", "CIVIL", "Dr. Arthur Casagrande", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
-                ("Artificial Intelligence & Machine Learning", "AIML", "Dr. Geoffrey Hinton", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
-                ("Computing Technologies", "CT", "Dr. Grace Hopper", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
-                ("Biomedical Engineering", "BME", "Dr. Willem Kolff", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
-                ("Chemical Engineering", "CHEM", "Dr. George Davis", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
-                ("Mechatronics Engineering", "MCT", "Dr. Tetsuro Mori", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
-                ("Aerospace Engineering", "AERO", "Dr. Theodore von Karman", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
+                ("Information Technology", "IT", "Suresh", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
+                ("Electrical & Electronics Engineering", "EEE", "Rajesh", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
+                ("Civil Engineering", "CIVIL", "Priya", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
+                ("Artificial Intelligence & Machine Learning", "AIML", "Manoj", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
+                ("Computing Technologies", "CT", "Divya", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
+                ("Biomedical Engineering", "BME", "Rahul", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
+                ("Chemical Engineering", "CHEM", "Deepa", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
+                ("Mechatronics Engineering", "MCT", "Arun", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
+                ("Aerospace Engineering", "AERO", "Sanjay", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
             ]
             for d_name, d_code, d_hod, d_desc in extra_depts:
-                if not db_session.query(Department).filter(Department.code == d_code).first():
+                dept_entry = db_session.query(Department).filter(Department.code == d_code).first()
+                if not dept_entry:
                     db_session.add(Department(name=d_name, code=d_code, hod_name=d_hod, description=d_desc, status="Active"))
+                elif dept_entry.hod_name != d_hod:
+                    dept_entry.hod_name = d_hod
+            
+            # Sync standard departments HOD names
+            standard_hods = {
+                "CSE": "Kaviya",
+                "ECE": "Anitha",
+                "MECH": "Vijay",
+                "DSAI": "Sneha",
+            }
+            for code, h_name in standard_hods.items():
+                s_dept = db_session.query(Department).filter(Department.code == code).first()
+                if s_dept and s_dept.hod_name != h_name:
+                    s_dept.hod_name = h_name
             db_session.commit()
 
             ct_dept = db_session.query(Department).filter(Department.code == "CT").first()
