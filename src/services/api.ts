@@ -397,7 +397,15 @@ export const aiApi = {
     const res = await api.get('/ai/schedules/jobs');
     return res.data;
   },
-  saveGeneratedTimetable: async (payload: { job_id: string; action: string }) => {
+  saveGeneratedTimetable: async (payload: {
+    job_id: string;
+    action: string;
+    department_id?: number;
+    semester?: number;
+    batch?: string;
+    academic_year?: string;
+    entries?: any[];
+  }) => {
     const res = await api.post('/ai/schedules/save', payload);
     return res.data;
   },

@@ -52,6 +52,11 @@ class GenerateScheduleResponse(BaseModel):
 class SaveGeneratedTimetableRequest(BaseModel):
     job_id: str
     action: str = "save_draft"  # save_draft, submit_approval, publish_direct
+    department_id: Optional[int] = None
+    semester: Optional[int] = None
+    batch: Optional[str] = None
+    academic_year: Optional[str] = None
+    entries: Optional[List[GeneratedTimetableEntry]] = None
 
 # -------------------------------------------------------------
 # Module 2: Conflict Detection Engine Schemas
