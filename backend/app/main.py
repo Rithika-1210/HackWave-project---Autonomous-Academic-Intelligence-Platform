@@ -151,6 +151,13 @@ try:
                 if not db_session.query(Course).filter(Course.code == "CT_PG").first():
                     db_session.add(Course(name="Integrated M.Sc in Computing Technologies (CT_PG)", code="CT_PG", department_id=ct_dept.id, duration_years=5, degree_type="Integrated Postgraduate", status="Active"))
                 db_session.commit()
+
+            # Ensure all 14 departments have faculty, classrooms, subjects, and timetables
+            try:
+                from app.services.seed_departments_timetable import ensure_all_departments_seeded
+                ensure_all_departments_seeded(db_session)
+            except Exception as tt_seed_err:
+                print(f"Department timetable seeding notice: {tt_seed_err}")
 except Exception as seed_err:
     print(f"Auto-seeding notice: {seed_err}")
 

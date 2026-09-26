@@ -75,6 +75,24 @@ def list_timetable_entries(
         TimetableEntry.start_time.asc()
     ).all()
 
+    # If no entries exist for this department or query, auto-generate authentic conflict-free timetable
+    if len(entries) == 0:
+        try:
+            from app.services.seed_departments_timetable import (
+                ensure_department_full_resources_and_timetable,
+                ensure_all_departments_seeded
+            )
+            if department_id:
+                ensure_department_full_resources_and_timetable(db, department_id)
+            elif not department_id and not faculty_id:
+                ensure_all_departments_seeded(db)
+            entries = query.order_by(
+                TimetableEntry.day_of_week.asc(),
+                TimetableEntry.start_time.asc()
+            ).all()
+        except Exception as seed_e:
+            print(f"Auto-generate fallback notice: {seed_e}")
+
     result = []
     for e in entries:
         result.append(TimetableEntryOut(
