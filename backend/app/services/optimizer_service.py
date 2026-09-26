@@ -117,8 +117,7 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
             )
             subjects.append(sub_obj)
 
-    if not classrooms:
-        classrooms = db.query(Classroom).all()
+    classrooms = db.query(Classroom).all()
     if not classrooms:
         classrooms = [
             Classroom(id=1, room_number="A-101", resource_type="Classroom", capacity=60, availability_status="Available"),
@@ -128,8 +127,7 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
             Classroom(id=5, room_number="LAB-302", resource_type="Laboratory", capacity=40, availability_status="Available"),
         ]
 
-    if not faculty_list:
-        faculty_list = db.query(Faculty).filter(Faculty.status == "Active").all()
+    faculty_list = db.query(Faculty).filter(Faculty.status == "Active").all()
     if not faculty_list:
         faculty_list = [
             Faculty(id=1, full_name="Dr. Sanjay Kumar", department_id=request.department_id, designation="Professor", max_weekly_workload=18, status="Active"),
@@ -202,9 +200,11 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
     faculty_lookup = {f.id: f for f in all_faculties}
 
     # Resource trackers across ALL sections
-    faculty_slot_tracker = {}   # (faculty_id, day, start_t) -> section_name
-    room_slot_tracker = {}      # (room_id, day, start_t) -> section_name
-    section_slot_tracker = {}   # (section_name, day, start_t) -> True
+    faculty_slot_tracker = {}         # (faculty_id, day, start_t) -> section_name
+    room_slot_tracker = {}            # (room_id, day, start_t) -> section_name
+    section_slot_tracker = {}         # (section_name, day, start_t) -> True
+    faculty_daily_load = {}           # (faculty_id, day) -> count
+    section_subject_day_load = {}     # (section_name, subject_code, day) -> count
 
     generated_entries: List[GeneratedTimetableEntry] = []
     section_entries_map: Dict[str, List[GeneratedTimetableEntry]] = {s: [] for s in sections}
@@ -214,6 +214,8 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
 
     for sec_idx, sec_name in enumerate(sections):
         current_slot_idx = sec_idx * 3  # Offset each section for maximum continuous variety
+        # Home-room consistency constraint: Assign a dedicated theory lecture hall per section
+        home_room = theory_rooms[sec_idx % len(theory_rooms)]
 
         for s_idx, s in enumerate(subjects):
             periods_needed = min(s.weekly_periods, len(slot_list))
@@ -226,7 +228,7 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
             f_id = assigned_f.id
             f_name = assigned_f.full_name
 
-            while allocated < periods_needed and attempts < len(slot_list) * 4:
+            while allocated < periods_needed and attempts < len(slot_list) * 5:
                 attempts += 1
                 slot = slot_list[current_slot_idx % len(slot_list)]
                 current_slot_idx += 1
@@ -236,12 +238,25 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
                 if (sec_name, day_name, start_t) in section_slot_tracker:
                     continue
 
-                # 2. Faculty availability check: Faculty cannot teach 2 sections simultaneously
+                # 2. Daily Subject Spreading Constraint: Max 1 period/day for theory courses
+                if s.subject_type == "Theory":
+                    current_daily_count = section_subject_day_load.get((sec_name, s.code, day_name), 0)
+                    if current_daily_count >= 1 and periods_needed <= num_days and attempts < len(slot_list) * 3:
+                        continue
+
+                # 3. Faculty availability check & Daily Workload Cap (Max 4 periods/day per instructor)
                 chosen_f_id = f_id
                 chosen_f_name = f_name
-                if (chosen_f_id, day_name, start_t) in faculty_slot_tracker:
-                    # Auto-repair: find an alternative available faculty member for this slot
-                    alt_f = next((f for f in all_faculties if (f.id, day_name, start_t) not in faculty_slot_tracker), None)
+                is_fac_busy = (chosen_f_id, day_name, start_t) in faculty_slot_tracker
+                is_fac_overloaded = faculty_daily_load.get((chosen_f_id, day_name), 0) >= 4
+
+                if is_fac_busy or is_fac_overloaded:
+                    # Auto-repair: find an alternative available faculty member with capacity
+                    alt_f = next(
+                        (f for f in all_faculties 
+                         if (f.id, day_name, start_t) not in faculty_slot_tracker and faculty_daily_load.get((f.id, day_name), 0) < 4),
+                        None
+                    )
                     if not alt_f:
                         conflicts_auto_resolved += 1
                         continue  # Try next slot
@@ -249,11 +264,16 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
                     chosen_f_name = alt_f.full_name
                     conflicts_auto_resolved += 1
 
-                # 3. Room & Lab availability check: Room cannot host 2 sections simultaneously
-                candidate_rooms = lab_rooms if s.subject_type == "Practical" else theory_rooms
+                # 4. Room & Lab availability check with Home-room priority
+                if s.subject_type == "Practical":
+                    candidate_rooms = lab_rooms
+                else:
+                    # Prioritize the section's consistent home lecture hall
+                    candidate_rooms = [home_room] + [r for r in theory_rooms if r.id != home_room.id]
+
                 chosen_room = next((r for r in candidate_rooms if (r.id, day_name, start_t) not in room_slot_tracker), None)
                 if not chosen_room:
-                    # Auto-repair: find any available room from all_rooms or try next slot
+                    # Auto-repair: fallback to any available room
                     chosen_room = next((r for r in all_rooms if (r.id, day_name, start_t) not in room_slot_tracker), None)
                     if not chosen_room:
                         conflicts_auto_resolved += 1
@@ -263,6 +283,8 @@ def generate_ai_timetable(db: Session, request: GenerateScheduleRequest, user_id
                 faculty_slot_tracker[(chosen_f_id, day_name, start_t)] = sec_name
                 room_slot_tracker[(chosen_room.id, day_name, start_t)] = sec_name
                 section_slot_tracker[(sec_name, day_name, start_t)] = True
+                faculty_daily_load[(chosen_f_id, day_name)] = faculty_daily_load.get((chosen_f_id, day_name), 0) + 1
+                section_subject_day_load[(sec_name, s.code, day_name)] = section_subject_day_load.get((sec_name, s.code, day_name), 0) + 1
 
                 entry = GeneratedTimetableEntry(
                     subject_id=s.id,
