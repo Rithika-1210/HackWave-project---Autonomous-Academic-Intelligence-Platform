@@ -61,6 +61,32 @@ try:
             if exam_u and exam_u.full_name != "Karthick":
                 exam_u.full_name = "Karthick"
             db_session.commit()
+
+            # Ensure all engineering departments and CT programs exist
+            from app.models.models import Department, Course
+            extra_depts = [
+                ("Information Technology", "IT", "Dr. Dennis Ritchie", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
+                ("Electrical & Electronics Engineering", "EEE", "Dr. Nikola Tesla", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
+                ("Civil Engineering", "CIVIL", "Dr. Arthur Casagrande", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
+                ("Artificial Intelligence & Machine Learning", "AIML", "Dr. Geoffrey Hinton", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
+                ("Computing Technologies", "CT", "Dr. Grace Hopper", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
+                ("Biomedical Engineering", "BME", "Dr. Willem Kolff", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
+                ("Chemical Engineering", "CHEM", "Dr. George Davis", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
+                ("Mechatronics Engineering", "MCT", "Dr. Tetsuro Mori", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
+                ("Aerospace Engineering", "AERO", "Dr. Theodore von Karman", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
+            ]
+            for d_name, d_code, d_hod, d_desc in extra_depts:
+                if not db_session.query(Department).filter(Department.code == d_code).first():
+                    db_session.add(Department(name=d_name, code=d_code, hod_name=d_hod, description=d_desc, status="Active"))
+            db_session.commit()
+
+            ct_dept = db_session.query(Department).filter(Department.code == "CT").first()
+            if ct_dept:
+                if not db_session.query(Course).filter(Course.code == "CT_UG").first():
+                    db_session.add(Course(name="B.Sc in Computing Technologies (CT_UG)", code="CT_UG", department_id=ct_dept.id, duration_years=3, degree_type="Undergraduate", status="Active"))
+                if not db_session.query(Course).filter(Course.code == "CT_PG").first():
+                    db_session.add(Course(name="Integrated M.Sc in Computing Technologies (CT_PG)", code="CT_PG", department_id=ct_dept.id, duration_years=5, degree_type="Integrated Postgraduate", status="Active"))
+                db_session.commit()
 except Exception as seed_err:
     print(f"Auto-seeding notice: {seed_err}")
 

@@ -287,7 +287,7 @@ export const CourseSubjectManagement: React.FC = () => {
               className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
             >
               <option value="">All Semesters</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
                 <option key={s} value={s}>Semester {s}</option>
               ))}
             </select>
@@ -495,9 +495,10 @@ export const CourseSubjectManagement: React.FC = () => {
                 onChange={(e) => setCDegree(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                <option value="Undergraduate">Undergraduate</option>
-                <option value="Postgraduate">Postgraduate</option>
-                <option value="Doctoral">Doctoral</option>
+                <option value="Undergraduate">Undergraduate (B.Tech / B.Sc)</option>
+                <option value="Integrated Postgraduate">Integrated Postgraduate (5-Yr M.Sc)</option>
+                <option value="Postgraduate">Postgraduate (M.Tech / M.Sc)</option>
+                <option value="Doctoral">Doctoral (Ph.D)</option>
               </select>
             </div>
           </div>
@@ -590,7 +591,7 @@ export const CourseSubjectManagement: React.FC = () => {
                 onChange={(e) => setSSemester(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>

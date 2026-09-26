@@ -108,7 +108,7 @@ export const ExamTimetableOptimizer: React.FC = () => {
               onChange={(e) => setSemester(Number(e.target.value))}
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none"
             >
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => (
                 <option key={s} value={s}>Semester {s}</option>
               ))}
             </select>

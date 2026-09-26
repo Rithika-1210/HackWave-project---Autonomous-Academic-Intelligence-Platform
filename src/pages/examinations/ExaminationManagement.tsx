@@ -216,7 +216,7 @@ export const ExaminationManagement: React.FC = () => {
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
           >
             <option value="">All Semesters</option>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
               <option key={s} value={s}>Semester {s}</option>
             ))}
           </select>
@@ -380,7 +380,7 @@ export const ExaminationManagement: React.FC = () => {
                 onChange={(e) => setSemester(Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
                   <option key={s} value={s}>Semester {s}</option>
                 ))}
               </select>

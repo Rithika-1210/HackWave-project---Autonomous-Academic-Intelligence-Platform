@@ -38,9 +38,18 @@ def seed_database():
         print("Seeding Departments...")
         depts_data = [
             ("Computer Science & Engineering", "CSE", "Kaviya", "Leading department in computing, algorithms, software engineering, and systems."),
+            ("Information Technology", "IT", "Dr. Dennis Ritchie", "Department of applied software systems, web engineering, cloud infrastructure, and cybersecurity."),
             ("Electronics & Communication Engineering", "ECE", "Dr. Claude Shannon", "Focusing on signal processing, embedded systems, telecommunications, and VLSI."),
+            ("Electrical & Electronics Engineering", "EEE", "Dr. Nikola Tesla", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
             ("Mechanical Engineering", "MECH", "Dr. Robert Goddard", "Core engineering in thermodynamics, structural robotics, CAD/CAM, and design."),
-            ("Data Science & Artificial Intelligence", "DSAI", "Dr. Ada Lovelace", "Specialized division in deep learning, autonomous systems, and predictive modeling.")
+            ("Civil Engineering", "CIVIL", "Dr. Arthur Casagrande", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
+            ("Data Science & Artificial Intelligence", "DSAI", "Dr. Ada Lovelace", "Specialized division in deep learning, autonomous systems, and predictive modeling."),
+            ("Artificial Intelligence & Machine Learning", "AIML", "Dr. Geoffrey Hinton", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
+            ("Computing Technologies", "CT", "Dr. Grace Hopper", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
+            ("Biomedical Engineering", "BME", "Dr. Willem Kolff", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
+            ("Chemical Engineering", "CHEM", "Dr. George Davis", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
+            ("Mechatronics Engineering", "MCT", "Dr. Tetsuro Mori", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
+            ("Aerospace Engineering", "AERO", "Dr. Theodore von Karman", "Aerodynamics, flight propulsion, astronautics, and orbital mechanics.")
         ]
         dept_map = {}
         for name, code, hod, desc in depts_data:
@@ -76,9 +85,27 @@ def seed_database():
 
         print("Seeding Courses...")
         courses_data = [
+            # 4-Year (8 Semesters) Engineering Courses
             ("B.Tech in Computer Science & Engineering", "BTECH-CSE", dept_map["CSE"].id, 4, "Undergraduate"),
-            ("B.Tech in Electronics & Communication", "BTECH-ECE", dept_map["ECE"].id, 4, "Undergraduate"),
+            ("B.Tech in Information Technology", "BTECH-IT", dept_map["IT"].id, 4, "Undergraduate"),
+            ("B.Tech in Electronics & Communication Engineering", "BTECH-ECE", dept_map["ECE"].id, 4, "Undergraduate"),
+            ("B.Tech in Electrical & Electronics Engineering", "BTECH-EEE", dept_map["EEE"].id, 4, "Undergraduate"),
             ("B.Tech in Mechanical Engineering", "BTECH-MECH", dept_map["MECH"].id, 4, "Undergraduate"),
+            ("B.Tech in Civil Engineering", "BTECH-CIVIL", dept_map["CIVIL"].id, 4, "Undergraduate"),
+            ("B.Tech in Artificial Intelligence & Data Science", "BTECH-AIDS", dept_map["DSAI"].id, 4, "Undergraduate"),
+            ("B.Tech in Artificial Intelligence & Machine Learning", "BTECH-AIML", dept_map["AIML"].id, 4, "Undergraduate"),
+            ("B.Tech in Biomedical Engineering", "BTECH-BME", dept_map["BME"].id, 4, "Undergraduate"),
+            ("B.Tech in Chemical Engineering", "BTECH-CHEM", dept_map["CHEM"].id, 4, "Undergraduate"),
+            ("B.Tech in Mechatronics Engineering", "BTECH-MCT", dept_map["MCT"].id, 4, "Undergraduate"),
+            ("B.Tech in Aerospace Engineering", "BTECH-AERO", dept_map["AERO"].id, 4, "Undergraduate"),
+
+            # CT_UG (B.Sc) - 3 Years (6 Semesters)
+            ("B.Sc in Computing Technologies (CT_UG)", "CT_UG", dept_map["CT"].id, 3, "Undergraduate"),
+
+            # CT_PG (M.Sc) - 5 Years (10 Semesters)
+            ("Integrated M.Sc in Computing Technologies (CT_PG)", "CT_PG", dept_map["CT"].id, 5, "Integrated Postgraduate"),
+
+            # Postgraduate
             ("M.Tech in Artificial Intelligence", "MTECH-AI", dept_map["DSAI"].id, 2, "Postgraduate")
         ]
         course_map = {}
