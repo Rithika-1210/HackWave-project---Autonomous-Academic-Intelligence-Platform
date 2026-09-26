@@ -178,6 +178,11 @@ export const TimetableManagement: React.FC = () => {
     e.preventDefault();
     setModalError(null);
 
+    if (!batch.trim()) {
+      setModalError('Student Batch is required. All fields must have input.');
+      return;
+    }
+
     if (startTime >= endTime) {
       setModalError('Start Time must be strictly earlier than End Time.');
       return;
@@ -701,9 +706,10 @@ export const TimetableManagement: React.FC = () => {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="block text-xs font-bold text-slate-700">Student Batch</label>
+              <label className="block text-xs font-bold text-slate-700">Student Batch *</label>
               <input
                 type="text"
+                required
                 value={batch}
                 onChange={(e) => setBatch(e.target.value)}
                 placeholder="e.g. Section A"

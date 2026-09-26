@@ -43,6 +43,7 @@ import { ScenarioComparison } from '@/pages/ai/ScenarioComparison';
 import { AdvancedAnalyticsDashboard } from '@/pages/ai/AdvancedAnalyticsDashboard';
 import { AiExplanationCenter } from '@/pages/ai/AiExplanationCenter';
 import { ChangeHistoryRollback } from '@/pages/ai/ChangeHistoryRollback';
+import { AiOptimizationHub } from '@/pages/ai/AiOptimizationHub';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -159,6 +160,9 @@ export const AppRoutes: React.FC = () => {
         />
 
         {/* Stage 2 & Stage 3: AI & Academic Intelligence Routes */}
+        <Route path="/ai" element={<AiOptimizationHub />} />
+        <Route path="/ai/optimization" element={<AiOptimizationHub />} />
+        <Route path="/ai/hub" element={<AiOptimizationHub />} />
         <Route path="/ai/timetable-generator" element={<AiTimetableGenerator />} />
         <Route path="/ai/optimization-results" element={<TimetableOptimizationResults />} />
         <Route path="/ai/conflicts" element={<ConflictPredictionDashboard />} />

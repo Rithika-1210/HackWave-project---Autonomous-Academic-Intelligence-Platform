@@ -7,7 +7,7 @@ import {
   Bell, LogOut, ChevronLeft, ChevronRight, UserCog,
   Sparkles, ShieldAlert, Wrench, RefreshCw, Scale, Bot,
   AlertTriangle, ShieldCheck, TrendingUp, Cpu, GitCompare,
-  BarChart3, HelpCircle, History
+  BarChart3, HelpCircle, History, Zap
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -83,6 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
     if (role === 'admin' || role === 'hod') {
       return [
+        { name: 'AI Optimization Hub', path: '/ai', icon: Zap },
         { name: 'AI Timetable Generator', path: '/ai/timetable-generator', icon: Sparkles },
         { name: 'Optimization Results', path: '/ai/optimization-results', icon: TrendingUp },
         { name: 'Digital Twin Sim.', path: '/ai/digital-twin', icon: Cpu },
@@ -103,6 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       ];
     } else if (role === 'faculty') {
       return [
+        { name: 'AI Optimization Hub', path: '/ai', icon: Zap },
         { name: 'Digital Twin Sim.', path: '/ai/digital-twin', icon: Cpu },
         { name: 'Scenario Comparison', path: '/ai/scenario-comparison', icon: GitCompare },
         { name: 'Academic Copilot', path: '/ai/copilot', icon: Bot },
@@ -111,6 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       ];
     } else if (role === 'exam_cell') {
       return [
+        { name: 'AI Optimization Hub', path: '/ai', icon: Zap },
         { name: 'Exam Optimizer', path: '/ai/exam-optimizer', icon: FileCheck2 },
         { name: 'Conflict Prediction', path: '/ai/conflicts', icon: ShieldAlert },
         { name: 'Academic Copilot', path: '/ai/copilot', icon: Bot },
@@ -118,6 +121,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       ];
     } else {
       return [
+        { name: 'AI Optimization Hub', path: '/ai', icon: Zap },
         { name: 'Academic Copilot', path: '/ai/copilot', icon: Bot },
       ];
     }

@@ -31,5 +31,7 @@ class Settings(BaseModel):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480  # 8 hours
     DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH}")
     CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "*"]
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", ""))
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
 
 settings = Settings()

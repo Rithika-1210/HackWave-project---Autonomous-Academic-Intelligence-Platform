@@ -384,6 +384,11 @@ export const aiApi = {
     batch?: string;
     academic_year?: string;
     working_days?: string[];
+    start_time?: string;
+    end_time?: string;
+    period_duration_mins?: number;
+    lunch_slot?: string;
+    weights?: Record<string, number>;
   }) => {
     const res = await api.post('/ai/schedules/generate', payload);
     return res.data;
@@ -567,6 +572,18 @@ export const aiApi = {
   },
   rollbackChange: async (changeId: string, reason?: string) => {
     const res = await api.post('/ai/changes/rollback', { change_id: changeId, reason });
+    return res.data;
+  },
+
+  // -------------------------------------------------------------
+  // Master Orchestrator: All AI Optimization Modules
+  // -------------------------------------------------------------
+  runAllModules: async () => {
+    const res = await api.post('/ai/modules/run-all');
+    return res.data;
+  },
+  getModulesStatus: async () => {
+    const res = await api.get('/ai/modules/status');
     return res.data;
   }
 };

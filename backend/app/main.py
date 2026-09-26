@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from app.core.security import get_password_hash
 from app.database.session import engine, Base
 from app.models import models
 
@@ -34,9 +35,55 @@ try:
     from app.seed_stage3 import seed_stage3_data
 
     with SessionLocal() as db_session:
-        has_admin = db_session.query(User).filter(User.email == "admin@aaip.edu").first()
-        if not has_admin:
+        expected_demo_users = {
+            "admin@aaip.edu": ("admin", "Ram", "Admin@2026!"),
+            "hod.cse@aaip.edu": ("hod", "Kaviya", "Hod@2026!"),
+            "dr.elena@aaip.edu": ("faculty", "Sham", "Faculty@2026!"),
+            "aarav.sharma@aaip.edu": ("student", "Rithika", "Student@2026!"),
+            "examcell@aaip.edu": ("exam_cell", "Karthick", "ExamCell@2026!"),
+        }
+
+        created_any_seed = False
+        for email, (role, full_name, password) in expected_demo_users.items():
+            user = db_session.query(User).filter(User.email == email).first()
+            if user is None:
+                existing_by_role = db_session.query(User).filter(User.role == role).order_by(User.id.asc()).first()
+                if existing_by_role is not None:
+                    existing_by_role.email = email
+                    existing_by_role.full_name = full_name
+                    existing_by_role.role = role
+                    existing_by_role.is_active = True
+                    existing_by_role.approval_status = "Approved"
+                    existing_by_role.hashed_password = get_password_hash(password)
+                    user = existing_by_role
+                else:
+                    user = User(
+                        email=email,
+                        hashed_password=get_password_hash(password),
+                        full_name=full_name,
+                        role=role,
+                        department_id=None,
+                        is_active=True,
+                        approval_status="Approved",
+                    )
+                    db_session.add(user)
+                    created_any_seed = True
+            else:
+                if user.full_name != full_name:
+                    user.full_name = full_name
+                if user.role != role:
+                    user.role = role
+                if user.hashed_password in [None, ""]:
+                    user.hashed_password = get_password_hash(password)
+                if user.approval_status != "Approved":
+                    user.approval_status = "Approved"
+                user.is_active = True
+
+        if not db_session.query(User).filter(User.email == "admin@aaip.edu").first():
             seed_database()
+            created_any_seed = True
+
+        if created_any_seed:
             try:
                 seed_stage3_data()
             except Exception as e3:
