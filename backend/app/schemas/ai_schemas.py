@@ -10,6 +10,7 @@ class GenerateScheduleRequest(BaseModel):
     semester: int = 1
     batch: str = "Section A"
     academic_year: str = "2025-2026"
+    sections: Optional[List[str]] = None
     working_days: List[str] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     start_time: str = "09:00"
     end_time: str = "17:00"
@@ -36,6 +37,8 @@ class GeneratedTimetableEntry(BaseModel):
     start_time: str
     end_time: str
     period_index: int
+    section: Optional[str] = "Section A"
+    batch: Optional[str] = None
 
 class GenerateScheduleResponse(BaseModel):
     job_id: str
@@ -48,6 +51,9 @@ class GenerateScheduleResponse(BaseModel):
     entries: List[GeneratedTimetableEntry]
     explanation: str
     infeasibility_reasons: List[str] = []
+    section_entries: Optional[Dict[str, List[GeneratedTimetableEntry]]] = None
+    validation_report: Optional[Dict[str, Any]] = None
+    checked_sections: Optional[List[str]] = None
 
 class SaveGeneratedTimetableRequest(BaseModel):
     job_id: str

@@ -382,6 +382,7 @@ export const aiApi = {
     department_id: number;
     semester: number;
     batch?: string;
+    sections?: string[];
     academic_year?: string;
     working_days?: string[];
     start_time?: string;

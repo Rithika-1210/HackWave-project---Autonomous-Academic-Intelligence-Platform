@@ -338,6 +338,8 @@ export interface GeneratedTimetableEntry {
   start_time: string;
   end_time: string;
   period_index: number;
+  section?: string;
+  batch?: string;
 }
 
 export interface GenerateScheduleResponse {
@@ -351,6 +353,21 @@ export interface GenerateScheduleResponse {
   entries: GeneratedTimetableEntry[];
   explanation: string;
   infeasibility_reasons: string[];
+  section_entries?: Record<string, GeneratedTimetableEntry[]>;
+  validation_report?: {
+    faculty_checks_passed: boolean;
+    lab_checks_passed: boolean;
+    classroom_checks_passed: boolean;
+    section_checks_passed: boolean;
+    faculty_clashes: number;
+    room_clashes: number;
+    section_clashes: number;
+    checked_sections: string[];
+    total_sections_count: number;
+    total_periods_allocated: number;
+    conflicts_auto_resolved: number;
+  };
+  checked_sections?: string[];
 }
 
 export interface ScheduleJobItem {
