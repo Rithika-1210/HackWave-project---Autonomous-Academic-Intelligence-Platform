@@ -43,16 +43,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const verifySession = async () => {
       const storedToken = localStorage.getItem('aaip_token');
-      if (storedToken) {
+      const storedUser = localStorage.getItem('aaip_user');
+
+      if (storedToken && storedUser) {
         try {
+          // Race between API call and a 5-second timeout
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
           const currentUser = await authApi.getMe();
+          clearTimeout(timeoutId);
           setUser(currentUser);
           localStorage.setItem('aaip_user', JSON.stringify(currentUser));
-        } catch (err) {
-          localStorage.removeItem('aaip_token');
-          localStorage.removeItem('aaip_user');
-          setUser(null);
-          setToken(null);
+        } catch (err: any) {
+          // Only clear session on explicit 401/403 auth failures
+          // Preserve session on network errors, timeouts, or backend being down
+          const status = err?.response?.status;
+          if (status === 401 || status === 403) {
+            localStorage.removeItem('aaip_token');
+            localStorage.removeItem('aaip_user');
+            setUser(null);
+            setToken(null);
+          }
+          // Network error / backend down / timeout → keep stored user session
         }
       }
       setLoading(false);
@@ -116,7 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         user,
         token,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated: !!user && (!!token || !!localStorage.getItem('aaip_token')),
         loading,
         login,
         register,
