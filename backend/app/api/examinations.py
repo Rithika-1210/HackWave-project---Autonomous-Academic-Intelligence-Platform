@@ -78,7 +78,7 @@ def list_examinations(
 def create_examination(
     ex_in: ExaminationCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "exam_cell"]))
+    current_user: User = Depends(require_roles(["admin", "exam_cell", "hod", "faculty"]))
 ):
     if ex_in.start_time >= ex_in.end_time:
         raise HTTPException(status_code=400, detail="start_time must be earlier than end_time")
@@ -141,7 +141,7 @@ def update_examination(
     exam_id: int,
     ex_in: ExaminationUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "exam_cell"]))
+    current_user: User = Depends(require_roles(["admin", "exam_cell", "hod", "faculty"]))
 ):
     exam = db.query(Examination).filter(Examination.id == exam_id).first()
     if not exam:
@@ -210,7 +210,7 @@ def update_examination(
 def delete_examination(
     exam_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "exam_cell"]))
+    current_user: User = Depends(require_roles(["admin", "exam_cell", "hod", "faculty"]))
 ):
     exam = db.query(Examination).filter(Examination.id == exam_id).first()
     if not exam:

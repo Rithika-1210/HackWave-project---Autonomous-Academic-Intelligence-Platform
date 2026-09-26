@@ -139,6 +139,25 @@ class FacultySubjectMapping(Base):
     academic_year = Column(String(50), default="2025-2026")
     semester = Column(Integer, default=1)
 
+class StudentEnrollment(Base):
+    __tablename__ = "student_enrollments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("students.id", ondelete="CASCADE"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    semester = Column(Integer, default=1)
+    academic_year = Column(String(50), default="2025-2026")
+    enrollment_status = Column(String(50), default="Enrolled")  # Enrolled, Completed, Dropped
+    internal_assessment_1 = Column(Integer, default=45)
+    internal_assessment_2 = Column(Integer, default=48)
+    assignment_marks = Column(Integer, default=19)
+    attendance_pct = Column(Integer, default=92)
+    grade = Column(String(10), default="A+")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    student = relationship("Student")
+    subject = relationship("Subject")
+
 class Classroom(Base):
     __tablename__ = "classrooms"
 

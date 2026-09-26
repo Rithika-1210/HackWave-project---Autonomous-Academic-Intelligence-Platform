@@ -104,8 +104,15 @@ def list_timetable_entries(
 def create_timetable_entry(
     entry_in: TimetableEntryCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "hod"]))
+    current_user: User = Depends(require_roles(["admin", "hod", "faculty"]))
 ):
+    if current_user.role == "faculty":
+        fac = db.query(Faculty).filter(Faculty.user_id == current_user.id).first()
+        if not fac:
+            raise HTTPException(status_code=403, detail="Faculty profile not found")
+        entry_in.faculty_id = fac.id
+        entry_in.department_id = fac.department_id
+
     # Time validity check
     if entry_in.start_time >= entry_in.end_time:
         raise HTTPException(
@@ -192,11 +199,16 @@ def update_timetable_entry(
     entry_id: int,
     entry_in: TimetableEntryUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "hod"]))
+    current_user: User = Depends(require_roles(["admin", "hod", "faculty"]))
 ):
     entry = db.query(TimetableEntry).filter(TimetableEntry.id == entry_id).first()
     if not entry:
         raise HTTPException(status_code=404, detail="Timetable entry not found")
+
+    if current_user.role == "faculty":
+        fac = db.query(Faculty).filter(Faculty.user_id == current_user.id).first()
+        if not fac or entry.faculty_id != fac.id:
+            raise HTTPException(status_code=403, detail="Faculty can only update their own scheduled slots")
     
     start_time = entry_in.start_time or entry.start_time
     end_time = entry_in.end_time or entry.end_time
@@ -272,11 +284,16 @@ def update_timetable_entry(
 def delete_timetable_entry(
     entry_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["admin", "hod"]))
+    current_user: User = Depends(require_roles(["admin", "hod", "faculty"]))
 ):
     entry = db.query(TimetableEntry).filter(TimetableEntry.id == entry_id).first()
     if not entry:
         raise HTTPException(status_code=404, detail="Timetable entry not found")
+
+    if current_user.role == "faculty":
+        fac = db.query(Faculty).filter(Faculty.user_id == current_user.id).first()
+        if not fac or entry.faculty_id != fac.id:
+            raise HTTPException(status_code=403, detail="Faculty can only delete their own scheduled slots")
     
     db.delete(entry)
     db.commit()

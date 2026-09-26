@@ -18,6 +18,7 @@ from app.api.examinations import router as examinations_router
 from app.api.notifications import router as notifications_router
 from app.api.dashboard import router as dashboard_router
 from app.api.ai import router as ai_router
+from app.api.enrollments import router as enrollments_router
 
 # Ensure all database tables exist safely
 try:
@@ -69,7 +70,8 @@ try:
                 ("Electrical & Electronics Engineering", "EEE", "Rajesh", "Specialized in power electronics, renewable energy, electrical machines, and grid systems."),
                 ("Civil Engineering", "CIVIL", "Priya", "Structural engineering, environmental hydraulics, geotechnical, and urban infrastructure."),
                 ("Artificial Intelligence & Machine Learning", "AIML", "Manoj", "Core neural architectures, reinforcement learning, NLP, and intelligent agents."),
-                ("Computing Technologies", "CT", "Divya", "Comprehensive computing division hosting 3-Year B.Sc (CT_UG) and 5-Year Integrated M.Sc (CT_PG) programs."),
+                ("B.Sc Computing Technologies (CT_UG)", "CT_UG", "Divya", "3-Year B.Sc Program in Computing Technologies."),
+                ("Integrated M.Sc Computing Technologies (CT_PG)", "CT_PG", "Divya", "5-Year Integrated M.Sc Program in Computing Technologies."),
                 ("Biomedical Engineering", "BME", "Rahul", "Bio-instrumentation, medical imaging, prosthetics, and healthcare technologies."),
                 ("Chemical Engineering", "CHEM", "Deepa", "Process engineering, reaction kinetics, separation technologies, and materials synthesis."),
                 ("Mechatronics Engineering", "MCT", "Arun", "Synergistic integration of mechanical, electronics, computer engineering, and robotics."),
@@ -133,6 +135,7 @@ app.include_router(subjects_router, prefix=settings.API_V1_STR)
 app.include_router(resources_router, prefix=settings.API_V1_STR)
 app.include_router(timetables_router, prefix=settings.API_V1_STR)
 app.include_router(examinations_router, prefix=settings.API_V1_STR)
+app.include_router(enrollments_router, prefix=settings.API_V1_STR)
 app.include_router(notifications_router, prefix=settings.API_V1_STR)
 app.include_router(dashboard_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)

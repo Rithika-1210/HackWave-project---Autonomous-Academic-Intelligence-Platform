@@ -12,7 +12,7 @@ import {
   FileCheck2, Plus, Search, Filter, Edit, Trash2, CalendarDays,
   Clock, MapPin, AlertCircle, CheckCircle2
 } from 'lucide-react';
-import { getDepartmentSemesters } from '@/utils/academicSemesters';
+import { getDepartmentSemesters, getDepartmentYears, getSemestersForYear } from '@/utils/academicSemesters';
 
 export const ExaminationManagement: React.FC = () => {
   const [exams, setExams] = useState<Examination[]>([]);
@@ -23,6 +23,7 @@ export const ExaminationManagement: React.FC = () => {
 
   // Filters
   const [deptFilter, setDeptFilter] = useState<string>('');
+  const [yearFilter, setYearFilter] = useState<string>('');
   const [semFilter, setSemFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
 
@@ -45,13 +46,15 @@ export const ExaminationManagement: React.FC = () => {
   const [status, setStatus] = useState<string>('Scheduled');
 
   const { user } = useAuth();
-  const canManage = user?.role === 'admin' || user?.role === 'exam_cell';
+  const canManage = user?.role === 'admin' || user?.role === 'exam_cell' || user?.role === 'hod' || user?.role === 'faculty';
 
   const activeDept = departments.find(d => d.id === (deptFilter ? Number(deptFilter) : (user?.department_id || undefined)));
   const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
+  const availableYears = getDepartmentYears(activeDept?.code || activeDept?.name);
 
   const modalDept = departments.find(d => d.id === deptId);
   const modalSemesters = getDepartmentSemesters(modalDept?.code || modalDept?.name);
+  const modalYears = getDepartmentYears(modalDept?.code || modalDept?.name);
 
   const loadData = async () => {
     try {
@@ -205,12 +208,12 @@ export const ExaminationManagement: React.FC = () => {
           </button>
         </form>
 
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {user?.role === 'admin' || user?.role === 'exam_cell' ? (
             <select
               value={deptFilter}
               onChange={(e) => setDeptFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
+              className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
             >
               <option value="">All Departments</option>
               {departments.map((d) => (
@@ -223,13 +226,35 @@ export const ExaminationManagement: React.FC = () => {
             </span>
           )}
 
+          {/* Academic Year Filter */}
+          <select
+            value={yearFilter}
+            onChange={(e) => {
+              const y = e.target.value;
+              setYearFilter(y);
+              if (y) {
+                const sems = getSemestersForYear(Number(y), availableSemesters.length);
+                if (sems.length > 0) setSemFilter(String(sems[0]));
+              }
+            }}
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
+          >
+            <option value="">All Academic Years ({availableYears.length} Years)</option>
+            {availableYears.map((yr) => (
+              <option key={yr} value={yr}>Year {yr} (Sem {((yr-1)*2)+1}-{Math.min(yr*2, availableSemesters.length)})</option>
+            ))}
+          </select>
+
           <select
             value={semFilter}
             onChange={(e) => setSemFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium"
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
           >
             <option value="">All Semesters (1 - {availableSemesters.length})</option>
-            {availableSemesters.map((s) => (
+            {(yearFilter 
+              ? availableSemesters.filter(s => getSemestersForYear(Number(yearFilter), availableSemesters.length).includes(s))
+              : availableSemesters
+            ).map((s) => (
               <option key={s} value={s}>Semester {s}</option>
             ))}
           </select>
@@ -254,7 +279,7 @@ export const ExaminationManagement: React.FC = () => {
                 <tr>
                   <th className="py-3 px-4">EXAMINATION NAME</th>
                   <th className="py-3 px-4">SUBJECT & CODE</th>
-                  <th className="py-3 px-4">DEPT & SEM</th>
+                  <th className="py-3 px-4">YEAR & SEMESTER</th>
                   <th className="py-3 px-4">DATE & TIMING</th>
                   <th className="py-3 px-4">EXAMINATION HALL</th>
                   <th className="py-3 px-4">STATUS</th>
@@ -274,7 +299,9 @@ export const ExaminationManagement: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4">
                       <span className="font-semibold text-slate-800">{ex.department_name}</span>
-                      <div className="text-[11px] font-mono text-slate-500">Sem {ex.semester}</div>
+                      <div className="text-[11px] font-mono text-purple-700 font-bold">
+                        Year {Math.ceil(ex.semester / 2)} • Sem {ex.semester}
+                      </div>
                     </td>
                     <td className="py-3.5 px-4 font-mono">
                       <div className="font-bold text-slate-900">{ex.exam_date}</div>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   User, Department, Faculty, Student, Course, Subject, Classroom,
-  TimetableEntry, Examination, NotificationItem,
+  TimetableEntry, Examination, NotificationItem, StudentEnrollment,
   AdminStats, HodStats, FacultyStats, StudentStats, ExamCellStats
 } from '@/types';
 
@@ -598,6 +598,23 @@ export const usersApi = {
   reject: async (userId: number) => {
     const res = await api.put<User>(`/users/${userId}/reject`);
     clearApiCache('users');
+    return res.data;
+  }
+};
+
+export const enrollmentsApi = {
+  getAll: async (params?: { semester?: number; student_id?: number }) => {
+    const res = await api.get<StudentEnrollment[]>('/enrollments', { params });
+    return res.data;
+  },
+  enroll: async (data: { subject_id: number; semester?: number; academic_year?: string }) => {
+    const res = await api.post<StudentEnrollment>('/enrollments', data);
+    clearApiCache('enrollments');
+    return res.data;
+  },
+  unenroll: async (id: number) => {
+    const res = await api.delete(`/enrollments/${id}`);
+    clearApiCache('enrollments');
     return res.data;
   }
 };

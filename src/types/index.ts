@@ -122,6 +122,26 @@ export interface Subject {
   assigned_faculty_name?: string;
 }
 
+export interface StudentEnrollment {
+  id: number;
+  student_id: number;
+  subject_id: number;
+  semester: number;
+  academic_year: string;
+  enrollment_status: 'Enrolled' | 'Completed' | 'Dropped';
+  internal_assessment_1?: number;
+  internal_assessment_2?: number;
+  assignment_marks?: number;
+  attendance_pct?: number;
+  grade?: string;
+  subject_name?: string;
+  subject_code?: string;
+  subject_type?: string;
+  weekly_periods?: number;
+  faculty_name?: string;
+  created_at: string;
+}
+
 export interface Classroom {
   id: number;
   name: string;

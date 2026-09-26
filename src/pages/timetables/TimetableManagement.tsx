@@ -13,7 +13,7 @@ import {
   CalendarDays, Plus, Filter, Trash2, Clock, MapPin,
   UserCheck, AlertCircle, CheckCircle2, ChevronRight, Building2, User as UserIcon
 } from 'lucide-react';
-import { getDepartmentSemesters } from '@/utils/academicSemesters';
+import { getDepartmentSemesters, getDepartmentYears, getSemestersForYear } from '@/utils/academicSemesters';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -28,6 +28,7 @@ export const TimetableManagement: React.FC = () => {
   // Filters
   const [selectedDay, setSelectedDay] = useState<string>('All');
   const [deptFilter, setDeptFilter] = useState<string>('');
+  const [yearFilter, setYearFilter] = useState<string>('');
   const [semFilter, setSemFilter] = useState<string>('6');
   const [facultyFilter, setFacultyFilter] = useState<string>('');
 
@@ -48,21 +49,23 @@ export const TimetableManagement: React.FC = () => {
   const [endTime, setEndTime] = useState<string>('10:00');
 
   const { user } = useAuth();
-  const canManage = user?.role === 'admin' || user?.role === 'hod';
+  const canManage = user?.role === 'admin' || user?.role === 'hod' || user?.role === 'faculty';
 
   // Dynamic academic semester rules:
-  // Engineering: strictly 8 semesters (1 to 8)
-  // Computing Tech UG (B.Sc): 6 semesters (1 to 6)
-  // Computing Tech PG (Integrated M.Sc): 10 semesters (1 to 10)
+  // Engineering: strictly 8 semesters (1 to 8) -> Years 1 to 4
+  // Computing Tech UG (B.Sc): 6 semesters (1 to 6) -> Years 1 to 3
+  // Computing Tech PG (Integrated M.Sc): 10 semesters (1 to 10) -> Years 1 to 5
   const activeDeptId = user?.role === 'admin'
     ? (deptFilter ? Number(deptFilter) : undefined)
     : (user?.department_id || undefined);
   const activeDept = departments.find(d => d.id === activeDeptId);
   const availableSemesters = getDepartmentSemesters(activeDept?.code || activeDept?.name);
+  const availableYears = getDepartmentYears(activeDept?.code || activeDept?.name);
 
   // Modal active dept & semester list
   const modalDept = departments.find(d => d.id === deptId);
   const modalSemesters = getDepartmentSemesters(modalDept?.code || modalDept?.name);
+  const modalYears = getDepartmentYears(modalDept?.code || modalDept?.name);
 
   const loadData = async () => {
     try {
@@ -192,7 +195,7 @@ export const TimetableManagement: React.FC = () => {
         />
 
         {/* Secondary Filter Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100">
           
           {/* 1. Department Filter - Global only for Admin; Locked to assigned dept for other roles */}
           {user?.role === 'admin' ? (
@@ -218,19 +221,41 @@ export const TimetableManagement: React.FC = () => {
             </div>
           )}
 
-          {/* 2. Dynamic Semester Filter - Engineering has 8 sem, B.Sc has 6 sem, M.Sc has 10 sem */}
+          {/* 2. Academic Year Filter */}
+          <select
+            value={yearFilter}
+            onChange={(e) => {
+              const y = e.target.value;
+              setYearFilter(y);
+              if (y) {
+                const sems = getSemestersForYear(Number(y), availableSemesters.length);
+                if (sems.length > 0) setSemFilter(String(sems[0]));
+              }
+            }}
+            className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
+          >
+            <option value="">All Academic Years ({availableYears.length} Years)</option>
+            {availableYears.map((yr) => (
+              <option key={yr} value={yr}>Year {yr} (Sem {((yr-1)*2)+1}-{Math.min(yr*2, availableSemesters.length)})</option>
+            ))}
+          </select>
+
+          {/* 3. Dynamic Semester Filter - Engineering has 8 sem, B.Sc has 6 sem, M.Sc has 10 sem */}
           <select
             value={semFilter}
             onChange={(e) => setSemFilter(e.target.value)}
             className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium cursor-pointer"
           >
             <option value="">All Semesters (1 - {availableSemesters.length})</option>
-            {availableSemesters.map((s) => (
+            {(yearFilter 
+              ? availableSemesters.filter(s => getSemestersForYear(Number(yearFilter), availableSemesters.length).includes(s))
+              : availableSemesters
+            ).map((s) => (
               <option key={s} value={s}>Semester {s}</option>
             ))}
           </select>
 
-          {/* 3. Instructor Filter - Faculty can only see themselves; HOD sees department faculty; Admin sees all */}
+          {/* 4. Instructor Filter - Faculty can only see themselves; HOD sees department faculty; Admin sees all */}
           {user?.role === 'faculty' ? (
             <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium flex items-center justify-between">
               <div className="flex items-center gap-1.5 truncate">
@@ -272,7 +297,7 @@ export const TimetableManagement: React.FC = () => {
                 <tr>
                   <th className="py-3 px-4">DAY & TIMING</th>
                   <th className="py-3 px-4">SUBJECT & CODE</th>
-                  <th className="py-3 px-4">DEPT & SEM</th>
+                  <th className="py-3 px-4">YEAR & SEMESTER</th>
                   <th className="py-3 px-4">ALLOCATED INSTRUCTOR</th>
                   <th className="py-3 px-4">VENUE / CLASSROOM</th>
                   <th className="py-3 px-4">BATCH</th>
@@ -292,7 +317,9 @@ export const TimetableManagement: React.FC = () => {
                     </td>
                     <td className="py-3 px-4">
                       <span className="font-semibold text-slate-800">{e.department_name}</span>
-                      <div className="text-[11px] text-slate-500 font-mono">Semester {e.semester}</div>
+                      <div className="text-[11px] text-sky-700 font-bold font-mono">
+                        Year {Math.ceil(e.semester / 2)} • Semester {e.semester}
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1.5 text-slate-800 font-semibold">

@@ -412,3 +412,43 @@ class ExamCellDashboardStats(BaseModel):
     upcoming_examinations: List[Dict[str, Any]]
     hall_occupancy: List[Dict[str, Any]]
     recent_activities: List[Dict[str, Any]]
+
+# --------------------------------------------------------------------------
+# Student Enrollment Schemas
+# --------------------------------------------------------------------------
+class StudentEnrollmentBase(BaseModel):
+    student_id: int
+    subject_id: int
+    semester: int = 1
+    academic_year: str = "2025-2026"
+    enrollment_status: str = "Enrolled"
+    internal_assessment_1: Optional[int] = 45
+    internal_assessment_2: Optional[int] = 48
+    assignment_marks: Optional[int] = 19
+    attendance_pct: Optional[int] = 92
+    grade: Optional[str] = "A+"
+
+class StudentEnrollmentCreate(BaseModel):
+    subject_id: int
+    semester: Optional[int] = None
+    academic_year: Optional[str] = "2025-2026"
+
+class StudentEnrollmentUpdate(BaseModel):
+    enrollment_status: Optional[str] = None
+    internal_assessment_1: Optional[int] = None
+    internal_assessment_2: Optional[int] = None
+    assignment_marks: Optional[int] = None
+    attendance_pct: Optional[int] = None
+    grade: Optional[str] = None
+
+class StudentEnrollmentOut(StudentEnrollmentBase):
+    id: int
+    subject_name: Optional[str] = None
+    subject_code: Optional[str] = None
+    subject_type: Optional[str] = None
+    weekly_periods: Optional[int] = None
+    faculty_name: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

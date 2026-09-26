@@ -41,7 +41,7 @@ export const StudentDashboard: React.FC = () => {
       <div className="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
-            <span>Student Academic Portal • Semester {stats.semester}</span>
+            <span>Student Academic Portal • Year {Math.ceil(stats.semester / 2)} • Semester {stats.semester}</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight">
             {stats.student_name}
